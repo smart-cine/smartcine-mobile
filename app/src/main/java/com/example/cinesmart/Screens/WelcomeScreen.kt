@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -24,9 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cinesmart.R
 import com.example.cinesmart.ui.theme.LocalAppColor
+import com.example.cinesmart.ui.theme.LocalAppImage
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.delay
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(onTimeout:()->Unit) {
     val infiniteTransition = rememberInfiniteTransition()
     val scaleAnimation by infiniteTransition.animateFloat(
         initialValue = 1.5f,
@@ -36,9 +40,14 @@ fun WelcomeScreen() {
             repeatMode = RepeatMode.Reverse
         )
     )
+    LaunchedEffect(onTimeout) {
+        //Fetch data Select film screen
+        delay(2000)
+        onTimeout()
+    }
     Box(modifier = Modifier
         .fillMaxSize()){
-        Image(painter = painterResource(R.drawable.background), contentDescription = "", modifier = Modifier
+        Image(painter = painterResource(LocalAppImage.current.normal_theme), contentDescription = "", modifier = Modifier
             .fillMaxSize()
             .blur(50.dp))
         Box(modifier = Modifier

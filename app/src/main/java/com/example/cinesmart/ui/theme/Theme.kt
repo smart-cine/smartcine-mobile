@@ -39,6 +39,8 @@ private val LightColorScheme = lightColorScheme(
 val LocalAppTypography = staticCompositionLocalOf { CustomTypography }
 val LocalAppFont = staticCompositionLocalOf { CustomFont }
 val LocalAppColor = staticCompositionLocalOf { CustomColor }
+val LocalAppImage = staticCompositionLocalOf { CustomImage }
+val LocalAppPadding = staticCompositionLocalOf { CustomPadding }
 
 @Composable
 fun CineSmartTheme(
@@ -59,7 +61,9 @@ fun CineSmartTheme(
     CompositionLocalProvider(
         LocalAppTypography provides CustomTypography,
         LocalAppColor provides CustomColor,
-        LocalAppFont provides CustomFont
+        LocalAppFont provides CustomFont,
+        LocalAppImage provides CustomImage,
+        LocalAppPadding provides CustomPadding
     ) {
         MaterialTheme(
             colorScheme = colorScheme,

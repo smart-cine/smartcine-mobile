@@ -1,7 +1,9 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
+
 
 android {
     namespace = "com.example.cinesmart"
@@ -50,9 +52,23 @@ android {
 }
 
 dependencies {
+    implementation("dev.chrisbanes.haze:haze-jetpack-compose:0.4.1")
+    val lifecycle_version = "2.3.0"
+// youtube play
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:11.1.0")
+// ViewModel
 
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+
+    implementation("androidx.core:core-ktx:1.3.2")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation("com.google.accompanist:accompanist-pager:0.20.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)

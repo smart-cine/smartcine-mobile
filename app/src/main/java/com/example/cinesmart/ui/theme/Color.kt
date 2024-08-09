@@ -11,13 +11,18 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 
-val backgroundColorDarkHeader = Color(0xFF1d273a)
+val backgroundColorDarkHeader = Color(0xFF212738)
+//val backgroundColorDarkHeader = Color(0xFF000000)
+
 val backgroundColorDarkBody = Color(0xFF1a2232)
+//val backgroundColorDarkBody = Color(0xFF161616)
+
 val buttonColorDarkTop = Color(0xFFca6b37)
 val buttonColorDarkBottom = Color(0xFFfc6d19)
+val textColorOrange = Color(0xFFff8036)
 val buttonColorDarkCenter = Color(0xFFfd7627)
 val textColorLight = Color(0xFFFFFFFFFFFF)
-val textBonusColorLight = Color(0xFF576684)
+val textBonusColorLight = Color(0xFF637394)
 val CustomColor = _Color(
     backgroundColorDarkHeader = backgroundColorDarkHeader,
     backgroundColorDarkBody = backgroundColorDarkBody,
@@ -25,7 +30,8 @@ val CustomColor = _Color(
     buttonColorDarkBottom = buttonColorDarkBottom,
     buttonColorDarkCenter = buttonColorDarkCenter,
     textColorLight = textColorLight,
-    textBonusColorLight = textBonusColorLight
+    textBonusColorLight = textBonusColorLight,
+    textColorOrange = textColorOrange
 )
 data class _Color(
     val backgroundColorDarkHeader:Color,
@@ -34,5 +40,6 @@ data class _Color(
     val buttonColorDarkBottom:Color,
     val buttonColorDarkCenter:Color,
     val textColorLight:Color,
-    val textBonusColorLight:Color
+    val textBonusColorLight:Color,
+    val textColorOrange:Color,
 )
