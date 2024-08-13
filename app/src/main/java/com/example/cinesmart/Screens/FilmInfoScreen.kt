@@ -1,14 +1,19 @@
 package com.example.cinesmart.Screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -26,7 +31,11 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 
 @Composable
-fun InfoFilmHeader(modifier: Modifier = Modifier, navigateState: String) {
+fun InfoFilmHeader(
+    modifier: Modifier = Modifier,
+    navigateState: String,
+    changeNavigateState: () -> Unit
+) {
     Column(modifier = modifier) {
         TopBarTitleAndReturnButton(
             "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô", modifier = Modifier.padding(
@@ -36,7 +45,10 @@ fun InfoFilmHeader(modifier: Modifier = Modifier, navigateState: String) {
                 bottom = LocalAppPadding.current.rounded_app_padding.dp
             )
         )
-        NavigationBarFilmInfo(navigateState = navigateState)
+        NavigationBarFilmInfo(
+            navigateState = navigateState,
+            changeNavigateState = changeNavigateState
+        )
     }
 }
 
@@ -44,7 +56,13 @@ fun InfoFilmHeader(modifier: Modifier = Modifier, navigateState: String) {
 fun FilmInfoScreen() {
     val nameFilm = "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô"
     val navigateState = rememberSaveable {
-        "About"
+        mutableStateOf("Sessions")
+
+    }
+    var changeNavigateState: () -> Unit = {
+        print(navigateState.value)
+        if (navigateState.value == "About") navigateState.value =
+            "Sessions" else navigateState.value = "About"
     }
     Background()
     Box(
@@ -59,7 +77,8 @@ fun FilmInfoScreen() {
                     modifier = Modifier
                         .background(LocalAppColor.current.backgroundColorDarkHeader)
                         .hazeChild(state = hazeState),
-                    navigateState = navigateState
+                    navigateState = navigateState.value,
+                    changeNavigateState = changeNavigateState,
                 )
             },
             bottomBar = {
@@ -70,7 +89,7 @@ fun FilmInfoScreen() {
                             top = LocalAppPadding.current.rounded_app_padding.dp,
                             start = LocalAppPadding.current.rounded_app_padding.dp,
                             end = LocalAppPadding.current.rounded_app_padding.dp,
-                            bottom = (5*LocalAppPadding.current.rounded_app_padding).dp
+                            bottom = (5 * LocalAppPadding.current.rounded_app_padding).dp
                         )
                 ) {
 
@@ -80,13 +99,12 @@ fun FilmInfoScreen() {
             contentColor = Color.Transparent,
             containerColor = Color.Transparent,
         ) { innerPadding ->
-            Column() {
                 FilmInfoBlock(
                     modifier = Modifier.padding(innerPadding),
-                    navigateState = "About"
+                    navigateState = navigateState.value
                 )
             }
-        }
+
     }
 }
 

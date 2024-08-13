@@ -26,9 +26,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -54,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -71,6 +75,7 @@ import com.example.cinesmart.ui.theme.shadow
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import java.sql.Timestamp
 
 
 @Composable
@@ -422,6 +427,66 @@ fun ButtonBottomBar() {
             .clickable { }
     )
 }
+@Composable
+fun DayElement(time: Timestamp, modifier: Modifier = Modifier, isFocus:Boolean) {
+    val dayString = "Mon"
+    val dayNum = 21
+    Column(
+        modifier = modifier
+            .width(50.dp)
+//            .border(1.dp, LocalAppColor.current.textColorOrange, RoundedCornerShape(20.dp))
+            .shadow(
+                RoundedCornerShape(10.dp),
+                if (isFocus)
+                LocalAppColor.current.buttonColorDarkCenter else Color.Transparent,
+                5.dp,
+                0.dp,
+                0.dp,
+                0.dp
+            )
+            .clip(RoundedCornerShape(10.dp))
+    ) {
+        Text(
+            text = dayString,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(LocalAppColor.current.backgroundColorDarkHeader)
+                .padding(
+                    top = (LocalAppPadding.current.rounded_app_padding / 2).dp,
+                    bottom = (LocalAppPadding.current.rounded_app_padding / 2).dp
+                ),
+            textAlign = TextAlign.Center,
+            style = LocalAppTypography.current.text_12_bold,
+            color = LocalAppColor.current.textBonusColorLight,
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(if (!isFocus)LocalAppColor.current.textColorOrange else LocalAppColor.current.backgroundColorDarkBody)
+        ) {
+            Text(
+                text = dayNum.toString(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(
+                        top = LocalAppPadding.current.rounded_app_padding.dp,
+                        bottom = LocalAppPadding.current.rounded_app_padding.dp
+                    ),
+                textAlign = TextAlign.Center,
+                style = LocalAppTypography.current.text_24_bold,
+                color = LocalAppColor.current.textColorLight
+            )
+        }
+    }
+}
+@Preview
+@Composable
+fun previewButton(){
+    DayElement(Timestamp(0, 0, 0, 0, 0, 0, 0), modifier = Modifier.padding(
+        LocalAppPadding.current.rounded_app_padding.dp), true)
+}
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -539,6 +604,30 @@ fun CommentInPostComponent(modifier: Modifier = Modifier){
 
                 Text(text = commentBody, style = LocalAppTypography.current.text_14_normal, color = LocalAppColor.current.textBonusColorLight)
             }
+        }
+    }
+}
+
+@Composable
+fun DayFilterRowComponent(modifier: Modifier = Modifier){
+    val listDay = listOf(1,2,3,4,5,6,7,8,9,10)
+    LazyRow(
+        modifier = modifier
+
+    ) {
+        itemsIndexed(listDay) { index, item ->
+            DayElement(
+                Timestamp(0, 0, 0, 0, 0, 0, 0), modifier = Modifier.padding(
+                    LocalAppPadding.current.rounded_app_padding.dp
+                ),
+                false
+            )
+            DayElement(
+                Timestamp(0, 0, 0, 0, 0, 0, 0), modifier = Modifier.padding(
+                    LocalAppPadding.current.rounded_app_padding.dp
+                ),
+                true
+            )
         }
     }
 }

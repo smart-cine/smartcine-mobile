@@ -1,6 +1,10 @@
 package com.example.cinesmart.Components
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateSizeAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,22 +13,37 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,7 +51,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.style.TextAlign
@@ -40,7 +58,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.cinesmart.Screens.FilmInfoScreen
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
@@ -48,11 +65,18 @@ import com.example.cinesmart.ui.theme.shadow
 import java.sql.Timestamp
 
 @Composable
-fun NavigationBarFilmInfo(navigateState: String, modifier: Modifier = Modifier) {
+fun NavigationBarFilmInfo(
+    navigateState: String,
+    modifier: Modifier = Modifier,
+    changeNavigateState: () -> Unit
+) {
     val colorHover = LocalAppColor.current.buttonColorDarkBottom
+    val animateHoverAbout by animateFloatAsState(if (navigateState == "About") 10f else 0f)
+    val animateHoverSessions by animateFloatAsState(if (navigateState == "Sessions") 10f else 0f)
+
     Row() {
         Box(modifier = Modifier
-            .clickable { }
+            .clickable { changeNavigateState() }
             .weight(1f)
 
             .drawBehind {
@@ -60,7 +84,7 @@ fun NavigationBarFilmInfo(navigateState: String, modifier: Modifier = Modifier) 
                     color = colorHover,
                     start = Offset(0f, size.height),
                     end = Offset(size.width, size.height),
-                    strokeWidth = if (navigateState == "About") 10f else 0f
+                    strokeWidth = animateHoverAbout
                 )
             }
             .padding(top = 12.dp, bottom = 12.dp), contentAlignment = Alignment.Center
@@ -68,14 +92,14 @@ fun NavigationBarFilmInfo(navigateState: String, modifier: Modifier = Modifier) 
             TextWithShadow(name = "About", navigateState = navigateState)
         }
         Box(modifier = Modifier
-            .clickable { }
+            .clickable { changeNavigateState() }
             .weight(1f)
             .drawBehind {
                 drawLine(
                     color = colorHover,
                     start = Offset(0f, size.height),
                     end = Offset(size.width, size.height),
-                    strokeWidth = if (navigateState == "Sessions") 10f else 0f
+                    strokeWidth = animateHoverSessions
                 )
             }
             .padding(top = 12.dp, bottom = 12.dp), contentAlignment = Alignment.Center) {
@@ -86,6 +110,8 @@ fun NavigationBarFilmInfo(navigateState: String, modifier: Modifier = Modifier) 
 
 @Composable
 fun TextWithShadow(modifier: Modifier = Modifier, name: String, navigateState: String) {
+    val animateColor by animateColorAsState(if (navigateState == name) LocalAppColor.current.textColorOrange else LocalAppColor.current.textBonusColorLight)
+
     Text(
         text = name,
         style = if (navigateState == name) LocalAppTypography.current.text_16_bold.copy(
@@ -104,13 +130,10 @@ fun TextWithShadow(modifier: Modifier = Modifier, name: String, navigateState: S
 @Composable
 fun FilmInfoBlock(modifier: Modifier = Modifier, navigateState: String) {
     // TODO 1: Create enum class hold About and Sessions
-    Box(modifier = modifier) {
-
-        if (navigateState == "About") {
-            FilmDescriptionBlock(modifier = Modifier.fillMaxWidth())
-        } else {
-            FilmPerformBlock()
-        }
+    if (navigateState == "About") {
+        FilmDescriptionBlock(modifier = modifier)
+    } else {
+        FilmPerformBlock(modifier = modifier)
     }
 }
 
@@ -118,7 +141,10 @@ fun FilmInfoBlock(modifier: Modifier = Modifier, navigateState: String) {
 fun FilmDescriptionBlock(modifier: Modifier = Modifier) {
     //TODO: Mock data info film
     //TODO: inject viewmodel to get all field here
-    val trailerId: String = "mqqft2x_Aa4"
+    val trailerId: String by remember {
+        mutableStateOf("mqqft2x_Aa4")
+
+    }
     val pictureUrl: String =
         "https://m.media-amazon.com/images/M/MV5BOGE2NWUwMDItMjA4Yi00N2Y3LWJjMzEtMDJjZTMzZTdlZGE5XkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_.jpg"
     val description: String =
@@ -132,65 +158,7 @@ fun FilmDescriptionBlock(modifier: Modifier = Modifier) {
     val cast: String = "Robert Pattinson, Jeffrey Wright, Colin Farrell"
     val averageRating: Float = 9.5f
     val listComment = listOf(1, 2, 3)
-//    LazyColumn(modifier = modifier) {
-//        item {
-//            YoutubePlayerComponent(videoId = trailerId)
-//        }
-//        item {
-//            DurationTimeAndLanguageRowComponent(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .wrapContentHeight()
-//                    .background(LocalAppColor.current.backgroundColorDarkHeader),
-//                releaseDate = releaseDate,
-//                duration = duration,
-//                averageRating = averageRating
-//            )
-//        }
-//        item {
-//            ImageFilmAndInfoComponent(
-//                modifier = Modifier
-//                    .background(LocalAppColor.current.backgroundColorDarkBody)
-//                    .padding(LocalAppPadding.current.rounded_app_padding.dp),
-//                pictureUrl = pictureUrl,
-//                description = description,
-//                filmTag = filmTag,
-//                restrictAge = restrictAge,
-//                releaseDate = releaseDate,
-//                duration = duration,
-//                director = director,
-//                cast = cast,
-//                language = language
-//            )
-//        }
-//        item {
-//            RankingBoardComponent(
-//                modifier = Modifier
-//                    .background(LocalAppColor.current.backgroundColorDarkHeader)
-//                    .padding(LocalAppPadding.current.rounded_app_padding.dp)
-//            )
-//        }
-//        //TODO: hanlde filtering 3 element into listComment to show, show all in detail comment screen.
-//        itemsIndexed(listComment) { index, item ->
-//            CommentComponent(comment = item)
-//        }
-//        item {
-//            Text(
-//                text = "Show All Comments",
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .background(LocalAppColor.current.backgroundColorDarkBody)
-//                    .padding(
-//                        LocalAppPadding.current.rounded_app_padding.dp
-//                    )
-//                    .clickable { },
-//                style = LocalAppTypography.current.text_14_bold,
-//                color = LocalAppColor.current.textColorOrange,
-//                textAlign = TextAlign.Center
-//            )
-//        }
-//
-//    }
+
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         YoutubePlayerComponent(videoId = trailerId)
         DurationTimeAndLanguageRowComponent(
@@ -250,13 +218,14 @@ fun FilmDescriptionBlock(modifier: Modifier = Modifier) {
             style = LocalAppTypography.current.text_14_bold,
             color = LocalAppColor.current.textColorOrange,
             textAlign = TextAlign.Center
+
         )
     }
 }
 
 
 @Composable
-fun CommentComponent(comment: Int/* TODO: FIX*/, showReply:Boolean = false) {
+fun CommentComponent(comment: Int/* TODO: FIX*/, showReply: Boolean = false) {
     val avatarUser: String? = null
 //        "https://static.vecteezy.com/system/resources/thumbnails/029/796/026/small_2x/asian-girl-anime-avatar-ai-art-photo.jpg"
     val userName: String = "Alex Gi"
@@ -349,7 +318,7 @@ fun CommentComponent(comment: Int/* TODO: FIX*/, showReply:Boolean = false) {
                     }
                 )
             }
-            Row(modifier = Modifier.padding(top = (2*LocalAppPadding.current.rounded_app_padding).dp)) {
+            Row(modifier = Modifier.padding(top = (2 * LocalAppPadding.current.rounded_app_padding).dp)) {
                 LikeCommentButton("like", totalLike, modifier = Modifier
                     .clickable { /*TODO:Like comment Button*/ }
                     .clip(
@@ -404,12 +373,14 @@ fun CommentComponent(comment: Int/* TODO: FIX*/, showReply:Boolean = false) {
                     isLiked = isLiked
                 )
             }
-            if (showReply){
-                Column(modifier = Modifier.padding(
-                    top = LocalAppPadding.current.rounded_app_padding.dp,
-                    start = LocalAppPadding.current.rounded_app_padding.dp,
-                    end = LocalAppPadding.current.rounded_app_padding.dp,
-                    )) {
+            if (showReply) {
+                Column(
+                    modifier = Modifier.padding(
+                        top = LocalAppPadding.current.rounded_app_padding.dp,
+                        start = LocalAppPadding.current.rounded_app_padding.dp,
+                        end = LocalAppPadding.current.rounded_app_padding.dp,
+                    )
+                ) {
                     CommentInPostComponent()
                     CommentInPostComponent()
                     CommentInPostComponent()
@@ -677,19 +648,260 @@ fun DurationTimeAndLanguageRowComponent(
 
 
 @Composable
-fun FilmPerformBlock() {
-    //TODO: Make Perform block
-    Box(
+fun FilmPerformBlock(modifier: Modifier = Modifier) {
+    val listCinema = listOf(1, 2, 3, 4, 5, 6, 7)
+    val listPerformCinema = listOf(1, 2, 3, 4, 5, 6, 7, 8)
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            DayFilterRowComponent(
+                modifier = Modifier.padding(
+                    top = LocalAppPadding.current.rounded_app_padding.dp,
+                    bottom = LocalAppPadding.current.rounded_app_padding.dp
+                )
+            )
+        }
+    ) { innerpadding ->
+
+        LazyColumn(
+            modifier = Modifier
+                .background(LocalAppColor.current.backgroundColorDarkBody)
+                .padding(innerpadding)
+        ) {
+            item {
+                Box(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp)) {
+                    LazyRow(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(
+                                LocalAppColor.current.backgroundColorDarkHeader
+                            )
+
+                            .padding(
+                                top = LocalAppPadding.current.rounded_app_padding.dp,
+                                bottom = LocalAppPadding.current.rounded_app_padding.dp,
+                                start = (LocalAppPadding.current.rounded_app_padding / 2).dp,
+                                end = (LocalAppPadding.current.rounded_app_padding / 2).dp
+                            )
+
+                    ) {
+                        itemsIndexed(listCinema) { index, item ->
+                            CinemaLogoComponent(false)
+                            CinemaLogoComponent(true)
+                        }
+                    }
+                }
+            }
+            itemsIndexed(listPerformCinema) { index, item ->
+                PerformCinema(index)
+            }
+        }
+
+    }
+
+}
+
+@Composable
+fun PerformCinema(index: Int, modifier: Modifier = Modifier) {
+    val cinemaName = "BHD Star Le Van Viet"
+    val isExpanded = remember {
+        mutableStateOf(false)
+    }
+
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp)
-            .background(Color.Blue)
-    )
+            .padding(
+                start = LocalAppPadding.current.rounded_app_padding.dp,
+                end = LocalAppPadding.current.rounded_app_padding.dp
+            )
+            .clip(
+                if (index == 0) RoundedCornerShape( n
+                    topStart = 12.dp,
+                    topEnd = 12.dp
+                ) else RoundedCornerShape(0.dp)
+            )
+            .background(LocalAppColor.current.backgroundColorDarkHeader).animateContentSize()
 
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    LocalAppPadding.current.rounded_app_padding.dp
+                ),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                AsyncImage(
+                    model = "https://cdn.nhanlucnganhluat.vn/uploads/images/D69545BE/logo/2019-04/pictures_library_6235_20180102135750_4563.jpg",
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+                Spacer(modifier = Modifier.padding(start = LocalAppPadding.current.rounded_app_padding.dp))
+                Text(
+                    text = cinemaName,
+                    color = LocalAppColor.current.textColorLight,
+                    style = LocalAppTypography.current.text_16_bold
+                )
+            }
+            Icon(
+                imageVector = if (!isExpanded.value) Icons.Rounded.KeyboardArrowDown else Icons.Rounded.KeyboardArrowUp,
+                contentDescription = "",
+                tint = LocalAppColor.current.textColorLight,
+                modifier = Modifier.clickable { isExpanded.value = !isExpanded.value }
+            )
+        }
+        if (isExpanded.value) {
+            GridPerform()
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(LocalAppPadding.current.rounded_app_padding.dp)
+                .height(1.dp)
+                .background(LocalAppColor.current.textBonusColorLight)
+        )
+
+    }
+
+}
+
+@Composable
+fun GridPerform() {
+    val listPerform by remember {
+        mutableStateOf(listOf(1, 2, 3, 4, 5, 6, 7, 8))
+    }
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3), modifier = Modifier
+            .heightIn(0.dp, 10000.dp)
+            .padding(
+                (LocalAppPadding.current.rounded_app_padding / 2).dp
+            )
+    ) {
+        itemsIndexed(listPerform) { index, item ->
+            Box(
+                modifier = Modifier
+                    .padding(
+                        top = LocalAppPadding.current.rounded_app_padding.dp,
+                        bottom = LocalAppPadding.current.rounded_app_padding.dp,
+                        start = (LocalAppPadding.current.rounded_app_padding / 2).dp,
+                        end = (LocalAppPadding.current.rounded_app_padding / 2).dp,
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(LocalAppColor.current.backgroundColorDarkBody)
+                    .padding(LocalAppPadding.current.rounded_app_padding.dp)
+                    .wrapContentHeight()
+            ) {
+                PerformItem()
+            }
+        }
+    }
+}
+
+@Composable
+fun PerformItem(modifier: Modifier = Modifier) {
+    val startTime = "09:00"
+    val endTime = "11:03"
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .clickable { }, horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(modifier = Modifier, verticalAlignment = Alignment.Bottom) {
+            Text(
+                text = startTime,
+                style = LocalAppTypography.current.text_18_bold,
+                color = LocalAppColor.current.textColorLight
+            )
+            Text(
+                text = "~$endTime",
+                style = LocalAppTypography.current.text_14_bold,
+                color = LocalAppColor.current.textBonusColorLight
+            )
+        }
+        Spacer(modifier = Modifier.padding((LocalAppPadding.current.rounded_app_padding / 2).dp))
+        Text(
+            text = "112/112 left",
+            style = LocalAppTypography.current.text_14_bold,
+            color = LocalAppColor.current.textBonusColorLight
+        )
+    }
 }
 
 @Preview
 @Composable
+fun PreviewPerformCinema() {
+    PerformCinema(index = 0)
+}
+
+@Composable
+fun ListPerformComponent(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        PerformComponent(isExpanded = false)
+    }
+}
+
+@Composable
+fun PerformComponent(modifier: Modifier = Modifier, isExpanded: Boolean) {
+    Row() {
+
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPerformComponent() {
+    PerformComponent(isExpanded = false)
+}
+
+@Composable
+fun CinemaLogoComponent(focus: Boolean) {
+    val nameCinema = "Lotte"
+    Column(
+        modifier = Modifier
+            .padding((LocalAppPadding.current.rounded_app_padding).dp)
+            .width(70.dp)
+    ) {
+        AsyncImage(
+            model = "https://cdn.nhanlucnganhluat.vn/uploads/images/D69545BE/logo/2019-04/pictures_library_6235_20180102135750_4563.jpg",
+            contentDescription = "",
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    if (focus) 2.dp else 0.dp,
+                    LocalAppColor.current.textColorOrange,
+                    RoundedCornerShape(6.dp)
+                )
+                .shadow(
+                    RoundedCornerShape(6.dp),
+                    LocalAppColor.current.textColorOrange,
+                    if (focus) 5.dp else 0.dp,
+                    0.dp,
+                    0.dp,
+                    0.dp
+                )
+                .clip(
+                    RoundedCornerShape(6.dp)
+                )
+        )
+        Spacer(modifier = Modifier.padding(2.dp))
+        Text(
+            text = nameCinema,
+            style = LocalAppTypography.current.text_16_bold,
+            color = if (!focus) LocalAppColor.current.textBonusColorLight else LocalAppColor.current.textColorLight,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+@Preview(showBackground = true, widthDp = 600, heightDp = 500)
+@Composable
 fun PreviewComponent() {
-    FilmInfoScreen()
+    FilmPerformBlock()
 }
