@@ -716,7 +716,7 @@ fun PerformCinema(index: Int, modifier: Modifier = Modifier) {
                 end = LocalAppPadding.current.rounded_app_padding.dp
             )
             .clip(
-                if (index == 0) RoundedCornerShape( n
+                if (index == 0) RoundedCornerShape(
                     topStart = 12.dp,
                     topEnd = 12.dp
                 ) else RoundedCornerShape(0.dp)
@@ -818,7 +818,7 @@ fun PerformItem(modifier: Modifier = Modifier) {
                 color = LocalAppColor.current.textColorLight
             )
             Text(
-                text = "~$endTime",
+                text = " ~$endTime",
                 style = LocalAppTypography.current.text_14_bold,
                 color = LocalAppColor.current.textBonusColorLight
             )

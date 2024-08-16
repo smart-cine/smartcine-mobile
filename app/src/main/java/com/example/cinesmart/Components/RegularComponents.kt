@@ -14,12 +14,18 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,9 +44,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Icon
@@ -57,7 +65,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -427,8 +438,9 @@ fun ButtonBottomBar() {
             .clickable { }
     )
 }
+
 @Composable
-fun DayElement(time: Timestamp, modifier: Modifier = Modifier, isFocus:Boolean) {
+fun DayElement(time: Timestamp, modifier: Modifier = Modifier, isFocus: Boolean) {
     val dayString = "Mon"
     val dayNum = 21
     Column(
@@ -438,7 +450,7 @@ fun DayElement(time: Timestamp, modifier: Modifier = Modifier, isFocus:Boolean) 
             .shadow(
                 RoundedCornerShape(10.dp),
                 if (isFocus)
-                LocalAppColor.current.buttonColorDarkCenter else Color.Transparent,
+                    LocalAppColor.current.buttonColorDarkCenter else Color.Transparent,
                 5.dp,
                 0.dp,
                 0.dp,
@@ -463,7 +475,7 @@ fun DayElement(time: Timestamp, modifier: Modifier = Modifier, isFocus:Boolean) 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(if (!isFocus)LocalAppColor.current.textColorOrange else LocalAppColor.current.backgroundColorDarkBody)
+                .background(if (!isFocus) LocalAppColor.current.textColorOrange else LocalAppColor.current.backgroundColorDarkBody)
         ) {
             Text(
                 text = dayNum.toString(),
@@ -481,11 +493,15 @@ fun DayElement(time: Timestamp, modifier: Modifier = Modifier, isFocus:Boolean) 
         }
     }
 }
+
 @Preview
 @Composable
-fun previewButton(){
-    DayElement(Timestamp(0, 0, 0, 0, 0, 0, 0), modifier = Modifier.padding(
-        LocalAppPadding.current.rounded_app_padding.dp), true)
+fun previewButton() {
+    DayElement(
+        Timestamp(0, 0, 0, 0, 0, 0, 0), modifier = Modifier.padding(
+            LocalAppPadding.current.rounded_app_padding.dp
+        ), true
+    )
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -569,8 +585,9 @@ fun LikeCommentButton(
         }
     }
 }
+
 @Composable
-fun AvatarUserWithFirstLetter(type:String = "large"){
+fun AvatarUserWithFirstLetter(type: String = "large") {
     val firstLetter = "AG"
     Box(
         modifier = Modifier
@@ -579,38 +596,56 @@ fun AvatarUserWithFirstLetter(type:String = "large"){
             .background(LocalAppColor.current.textBonusColorLight),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = firstLetter, color = LocalAppColor.current.textColorLight, style = if(type == "large") LocalAppTypography.current.text_16_normal else LocalAppTypography.current.text_12_bold)
+        Text(
+            text = firstLetter,
+            color = LocalAppColor.current.textColorLight,
+            style = if (type == "large") LocalAppTypography.current.text_16_normal else LocalAppTypography.current.text_12_bold
+        )
     }
 }
+
 @Composable
-fun CommentInPostComponent(modifier: Modifier = Modifier){
-    val userImage:String? = null
-    val userName:String = "John Davidson"
-    val commentBody:String = "M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. "
-    Row(modifier = Modifier.padding(bottom = LocalAppPadding.current.rounded_app_padding.dp).clickable {  }) {
-        if (userImage!=null){
+fun CommentInPostComponent(modifier: Modifier = Modifier) {
+    val userImage: String? = null
+    val userName: String = "John Davidson"
+    val commentBody: String =
+        "M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. M thi biet cdb gi. "
+    Row(modifier = Modifier
+        .padding(bottom = LocalAppPadding.current.rounded_app_padding.dp)
+        .clickable { }) {
+        if (userImage != null) {
             AsyncImage(model = userImage, contentDescription = "")
-        } else{
+        } else {
             AvatarUserWithFirstLetter(type = "small")
         }
-        Spacer(modifier = Modifier.padding((LocalAppPadding.current.rounded_app_padding/2).dp))
+        Spacer(modifier = Modifier.padding((LocalAppPadding.current.rounded_app_padding / 2).dp))
         Column {
-            Text(text = userName, style = LocalAppTypography.current.text_14_bold, color = LocalAppColor.current.textColorLight)
-            Spacer(modifier = Modifier.padding(top = (LocalAppPadding.current.rounded_app_padding/2).dp))
-            Box(modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(LocalAppColor.current.backgroundColorDarkHeader)
-                .padding((LocalAppPadding.current.rounded_app_padding / 2).dp)){
+            Text(
+                text = userName,
+                style = LocalAppTypography.current.text_14_bold,
+                color = LocalAppColor.current.textColorLight
+            )
+            Spacer(modifier = Modifier.padding(top = (LocalAppPadding.current.rounded_app_padding / 2).dp))
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(LocalAppColor.current.backgroundColorDarkHeader)
+                    .padding((LocalAppPadding.current.rounded_app_padding / 2).dp)
+            ) {
 
-                Text(text = commentBody, style = LocalAppTypography.current.text_14_normal, color = LocalAppColor.current.textBonusColorLight)
+                Text(
+                    text = commentBody,
+                    style = LocalAppTypography.current.text_14_normal,
+                    color = LocalAppColor.current.textBonusColorLight
+                )
             }
         }
     }
 }
 
 @Composable
-fun DayFilterRowComponent(modifier: Modifier = Modifier){
-    val listDay = listOf(1,2,3,4,5,6,7,8,9,10)
+fun DayFilterRowComponent(modifier: Modifier = Modifier) {
+    val listDay = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
     LazyRow(
         modifier = modifier
 
@@ -637,9 +672,375 @@ fun DayFilterRowComponent(modifier: Modifier = Modifier){
 fun PreviewRegularComposable() {
     ButtonBottomBar()
 }
+
 @Preview
 @Composable
-fun PreviewCommentComposable(){
+fun PreviewCommentComposable() {
     CommentInPostComponent()
 }
 
+
+@Composable
+fun GridPickSeat() {
+    // set up all transformation states
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    val state = rememberTransformableState { zoomChange, offsetChange, rotationChange ->
+        scale *= zoomChange
+        offset += offsetChange
+    }
+    val cols = 40
+    val rows = 30
+    Column(
+        Modifier
+            .graphicsLayer(
+                scaleX = if (scale < .5f) .5f else if (scale > 3f) 3f else scale,
+                scaleY = if (scale < .5f) .5f else if (scale > 3f) 3f else scale,
+                translationX = if (offset.x > 600f) 600f else if (offset.x < -600f) -600f else offset.x,
+                translationY = if (offset.y > 600f) 600f else if (offset.y < -600f) -600f else offset.y
+            )
+            .transformable(state = state)
+            .fillMaxWidth()
+            .height(500.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Screen")
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            for (i in 1..cols) {
+                Row {
+                    for (j in 1..rows) {
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .wrapContentHeight()
+                                .background(LocalAppColor.current.textColorOrange)
+                        ) {
+                            Text(text = "U")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun ZoomableGridDemo() {
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset(0f, 0f)) }
+    val cols = 5
+    val rows = 10
+    Box(
+        modifier = Modifier.background(LocalAppColor.current.backgroundColorDarkBody),
+        contentAlignment = Alignment.TopEnd
+    ) {
+        Box(
+            modifier = Modifier
+
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .pointerInput(Unit) {
+                    detectTransformGestures { _, pan, zoom, _ ->
+                        //TODO: Move fixed number of scale and offset in one place
+                        scale = if (scale < 0.8f) 0.8f else if (scale > 1.5f) 1.5f else scale * zoom
+                        offset = Offset(
+                            if (offset.x > 400f) 400f else if (offset.x < -400f) -400f else offset.x + pan.x,
+                            if (offset.y > 400f) 400f else if (offset.y < -400f) -400f else offset.y + pan.y
+                        )
+                    }
+                }
+                .clip(RoundedCornerShape(0.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            // Khu vực để hiển thị grid
+            Box(
+                modifier = Modifier
+
+                    .graphicsLayer(
+                        scaleX = if (scale > 1.5f) 1.5f else if (scale < 0.8f) 0.8f else scale,
+                        scaleY = if (scale > 1.5f) 1.5f else if (scale < 0.8f) 0.8f else scale,
+                        translationX = if (offset.x > 400f) 400f else if (offset.x < -400f) -400f else offset.x,
+                        translationY = if (offset.y > 400f) 400f else if (offset.y < -400f) -400f else offset.y
+                    )
+            ) {
+                // Ví dụ tạo một grid đơn giản
+                GridView(cols, rows)
+            }
+
+            // Màn hình thu nhỏ hiển thị vị trí hiện tại
+        }
+        SmallView(scale, offset, cols = cols, rows = rows)
+    }
+
+}
+
+@Composable
+fun GridView(cols: Int, rows: Int) {
+    // Xây dựng grid đơn giản (ví dụ 10x10 ô vuông)
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "SCREEN",
+            style = LocalAppTypography.current.text_20_normal,
+            color = LocalAppColor.current.textBonusColorLight
+        )
+//        Spacer(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp))
+        for (i in 0..cols) {
+            Row {
+                for (j in 0..rows) {
+                    Seat()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RowScope.Seat(modifier: Modifier = Modifier) {
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .aspectRatio(1f)
+            .padding(4.dp)
+    ) {
+        //TODO: Move mock data to specific place
+        val type = rememberSaveable {
+            mutableStateOf("Available")
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .shadow(
+                    RoundedCornerShape(10.dp),
+                    if (type.value == "Chosen")
+                        LocalAppColor.current.textColorOrange else LocalAppColor.current.backgroundColorDarkHeader,
+                    5.dp,
+                    0.dp,
+                    0.dp,
+                    0.dp
+                )
+                .clip(
+                    RoundedCornerShape(10.dp)
+                )
+                .background(if (type.value == "Chosen") LocalAppColor.current.textColorOrange else LocalAppColor.current.backgroundColorDarkHeader)
+                .clickable {
+                    if (type.value == "Available") {
+                        type.value = "Chosen"
+                    } else if (type.value == "Chosen") {
+                        type.value = "Available"
+                    }
+                },
+            contentAlignment = Alignment.Center
+
+        ) {
+            if (type.value == "Occupied") {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = "",
+                    modifier = Modifier.size(10.dp),
+                    tint = LocalAppColor.current.textBonusColorLight
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+fun SmallView(scale: Float, offset: Offset, cols: Int, rows: Int) {
+    Box(
+        modifier = Modifier
+            .padding(
+                LocalAppPadding.current.rounded_app_padding.dp
+            )
+            .fillMaxWidth(0.25f)
+            .aspectRatio(1f)
+            .background(Color.Black)
+            .clip(shape = RoundedCornerShape(0.dp))
+    ) {
+        // Khu vực để hiển thị grid
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "SCREEN",
+                    style = LocalAppTypography.current.text_12_bold,
+                    color = LocalAppColor.current.textColorLight
+                )
+                for (i in 0..cols) {
+                    Row {
+                        for (j in 0..rows) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .padding((1).dp)
+                                    .clip(RoundedCornerShape(2.dp))
+
+                                    .background(Color.Gray)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer(
+                    scaleX = if (scale > 1.5f) 1 / 1.5f else if (scale < 0.8f) 1 / 0.8f else 1 / scale,
+                    scaleY = if (scale > 1.5f) 1 / 1.5f else if (scale < 0.8f) 1 / 0.8f else 1 / scale,
+                    translationX = -(if (offset.x > 400f) 400f else if (offset.x < -400f) -400f else offset.x) / 4f,
+                    translationY = -(if (offset.y > 400f) 400f else if (offset.y < -400f) -400f else offset.y) / 4f
+                )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(1.dp, LocalAppColor.current.textColorOrange, RoundedCornerShape(0.dp))
+            ) {
+
+            }
+        }
+    }
+}
+
+
+@Composable
+fun FilmPerformInfoTopBar(modifier: Modifier = Modifier) {
+    val nameFilm = "The Batman"
+    val dayPerform = "April 14"
+    val timePerform = "15:10"
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = nameFilm,
+            style = LocalAppTypography.current.text_24_bold,
+            color = LocalAppColor.current.textColorLight,
+            modifier = Modifier.padding(
+                start = LocalAppPadding.current.rounded_app_padding.dp,
+                end = LocalAppPadding.current.rounded_app_padding.dp,
+                bottom = LocalAppPadding.current.rounded_app_padding.dp,
+            )
+        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(
+                LocalAppPadding.current.rounded_app_padding.dp
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .border(
+                        1.dp,
+                        LocalAppColor.current.textBonusColorLight,
+                        RoundedCornerShape(4.dp)
+                    )
+                    .padding((LocalAppPadding.current.rounded_app_padding).dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.DateRange,
+                    contentDescription = "",
+                    tint = LocalAppColor.current.textColorLight
+                )
+                Text(
+                    text = dayPerform,
+                    style = LocalAppTypography.current.text_18_bold,
+                    color = LocalAppColor.current.textColorLight
+                )
+            }
+            Spacer(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp))
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .border(
+                        1.dp,
+                        LocalAppColor.current.textBonusColorLight,
+                        RoundedCornerShape(4.dp)
+                    )
+                    .padding(
+                        LocalAppPadding.current.rounded_app_padding.dp
+                    ),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.PlayArrow,
+                    contentDescription = "",
+                    tint = LocalAppColor.current.textColorLight
+                )
+                Text(
+                    text = dayPerform,
+                    style = LocalAppTypography.current.text_18_bold,
+                    color = LocalAppColor.current
+                        .textColorLight
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun Node(type: String) {
+    Box(
+        modifier = Modifier
+            .size(20.dp)
+            .background(if (type == "Chosen") LocalAppColor.current.backgroundColorDarkHeader else Color.Transparent)
+            .shadow(
+                CircleShape,
+                if (type == "Chosen") LocalAppColor.current.textColorOrange else Color.Transparent,
+                5.dp,
+                0.dp,
+                0.dp,
+                0.dp
+            )
+    ) {
+        Box(
+            modifier = Modifier
+                .size(20.dp)
+                .clip(CircleShape)
+                .background(if (type == "Chosen") LocalAppColor.current.textColorOrange else LocalAppColor.current.backgroundColorDarkHeader),
+            contentAlignment = Alignment.Center
+        ) {
+            if (type == "Occupied") {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = "",
+                    tint = LocalAppColor.current.textBonusColorLight,
+                    modifier = Modifier.size(10.dp)
+                )
+            }
+        }
+
+    }
+}
+
+@Composable
+fun TypeOfSeat(type: String) {
+    Row {
+        Node(type)
+        Spacer(modifier = Modifier.padding((LocalAppPadding.current.rounded_app_padding / 4).dp))
+        Text(
+            text = type,
+            style = LocalAppTypography.current.text_16_bold,
+            color = LocalAppColor.current.textBonusColorLight
+        )
+    }
+}
+
+@Composable
+@Preview
+fun PreviewGridPickSeat() {
+    Node("Available")
+}

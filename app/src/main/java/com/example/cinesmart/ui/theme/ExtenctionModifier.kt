@@ -1,5 +1,6 @@
 package com.example.cinesmart.ui.theme
 
+import android.graphics.BitmapFactory
 import android.graphics.BlurMaskFilter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -9,7 +10,10 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
+import kotlinx.coroutines.coroutineScope
 
 
 fun Modifier.shadow(
@@ -46,3 +50,5 @@ fun Modifier.shadow(
     }
 
 }
+
+
