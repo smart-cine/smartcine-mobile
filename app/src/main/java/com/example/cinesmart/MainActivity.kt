@@ -39,6 +39,7 @@ import com.example.cinesmart.Components.GridPickSeat
 import com.example.cinesmart.Components.TypeOfSeat
 import com.example.cinesmart.Components.ZoomableGridDemo
 import com.example.cinesmart.Screens.PaymentScreen
+import com.example.cinesmart.Screens.PaymentSuccessScreen
 import com.example.cinesmart.Screens.PickseatScreen
 import com.example.cinesmart.Screens.WelcomeScreen
 import com.example.cinesmart.ui.theme.CineSmartTheme
@@ -66,7 +67,7 @@ fun MainApp() {
     if (loading.value) {
         WelcomeScreen({ loading.value = false })
     } else {
-        PaymentScreen()
+        PaymentSuccessScreen()
     }
 }
 

@@ -93,7 +93,7 @@ fun FilmInfoScreen() {
                         )
                 ) {
 
-                    ButtonBottomBar()
+                    ButtonBottomBar("Select Session")
                 }
             },
             contentColor = Color.Transparent,

@@ -121,7 +121,7 @@ fun BottomBarPerform() {
                 Text(text = fee.toString()+" VND", style = LocalAppTypography.current.text_18_bold, color = LocalAppColor.current.textColorLight)
             }
             Spacer(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp))
-            ButtonBottomBar()
+            ButtonBottomBar("Top Up")
         }
     }
 }

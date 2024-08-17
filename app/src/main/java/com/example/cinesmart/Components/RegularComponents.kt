@@ -445,9 +445,9 @@ fun YoutubePlayerComponent(
 }
 
 @Composable
-fun ButtonBottomBar() {
+fun ButtonBottomBar(content:String, modifier: Modifier = Modifier) {
     CustomButton(
-        size = 16, content = "Select session", isFullWidth = true, modifier = Modifier
+        size = 16, content = content, isFullWidth = true, modifier = modifier
             .shadow(
                 RoundedCornerShape(10.dp),
                 LocalAppColor.current.buttonColorDarkCenter,
@@ -688,11 +688,7 @@ fun DayFilterRowComponent(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
-@Composable
-fun PreviewRegularComposable() {
-    ButtonBottomBar()
-}
+
 
 @Preview
 @Composable
