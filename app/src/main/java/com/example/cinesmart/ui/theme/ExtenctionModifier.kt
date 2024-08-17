@@ -1,5 +1,6 @@
 package com.example.cinesmart.ui.theme
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -27,8 +28,11 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.unit.Dp
+import androidx.palette.graphics.Palette
 import com.example.cinesmart.Components.StrokeStyle
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 
@@ -189,6 +193,5 @@ fun DrawScope.setupPaint(style: StrokeStyle, brush: Brush): Paint {
             /* shadowColor = */ android.graphics.Color.WHITE
         )
     }
-
     return paint
 }

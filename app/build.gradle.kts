@@ -64,6 +64,8 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
 
+    implementation ("androidx.palette:palette-ktx:1.0.0")
+
     implementation("androidx.core:core-ktx:1.3.2")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

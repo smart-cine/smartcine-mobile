@@ -27,6 +27,7 @@ import com.example.cinesmart.Components.ButtonBottomBar
 import com.example.cinesmart.Components.CustomButton
 import com.example.cinesmart.Components.FilmPerformInfoTopBar
 import com.example.cinesmart.Components.TagRankAndAge
+import com.example.cinesmart.Components.TagString
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
 import com.example.cinesmart.Components.TypeOfSeat
 import com.example.cinesmart.Components.ZoomableGridDemo
@@ -113,11 +114,7 @@ fun BottomBarPerform() {
                 bottom = LocalAppPadding.current.rounded_app_padding.dp,
             ), verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "The Batman: "+"Seat-", style = LocalAppTypography.current.text_18_bold, color = LocalAppColor.current.textColorLight)
-                Box(modifier =Modifier.wrapContentSize().clip(RoundedCornerShape(4.dp)).background(
-                    LocalAppColor.current.textColorLight).padding((LocalAppPadding.current.rounded_app_padding/2).dp)){
-                    Text(text = seatName, style = LocalAppTypography.current.text_16_bold, color = LocalAppColor.current.backgroundColorDarkBody
-                    )
-                }
+                TagString(seatName = seatName)
             }
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Estimated", style = LocalAppTypography.current.text_14_normal, color = LocalAppColor.current.textColorLight)

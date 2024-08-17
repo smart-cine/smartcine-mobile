@@ -1143,6 +1143,15 @@ fun CircleLoader(
 }
 
 @Composable
+fun TagString(modifier: Modifier = Modifier, seatName:String){
+    Box(modifier =Modifier.wrapContentSize().clip(RoundedCornerShape(4.dp)).background(
+        LocalAppColor.current.textColorLight).padding((LocalAppPadding.current.rounded_app_padding/2).dp)){
+        Text(text = seatName, style = LocalAppTypography.current.text_16_bold, color = LocalAppColor.current.backgroundColorDarkBody
+        )
+    }
+}
+
+@Composable
 @Preview
 fun PreviewGridPickSeat() {
     Node("Available")
