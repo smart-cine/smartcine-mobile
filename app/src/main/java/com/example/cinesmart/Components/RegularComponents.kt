@@ -3,7 +3,14 @@ package com.example.cinesmart.Components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Transition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,6 +19,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,6 +63,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,10 +73,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -75,6 +93,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
@@ -82,6 +101,8 @@ import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppImage
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
+import com.example.cinesmart.ui.theme.detectTransformGestures
+import com.example.cinesmart.ui.theme.setupPaint
 import com.example.cinesmart.ui.theme.shadow
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -744,14 +765,18 @@ fun ZoomableGridDemo() {
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .pointerInput(Unit) {
-                    detectTransformGestures { _, pan, zoom, _ ->
-                        //TODO: Move fixed number of scale and offset in one place
-                        scale = if (scale < 0.8f) 0.8f else if (scale > 1.5f) 1.5f else scale * zoom
-                        offset = Offset(
-                            if (offset.x > 400f) 400f else if (offset.x < -400f) -400f else offset.x + pan.x,
-                            if (offset.y > 400f) 400f else if (offset.y < -400f) -400f else offset.y + pan.y
-                        )
-                    }
+                    detectTransformGestures(
+                        pass = PointerEventPass.Initial,
+                        onGesture = { _, pan, zoom, _ ->
+
+                            scale =
+                                if (scale < 0.8f) 0.8f else if (scale > 1.5f) 1.5f else scale * zoom
+                            offset = Offset(
+                                if (offset.x > 400f) 400f else if (offset.x < -400f) -400f else offset.x + pan.x,
+                                if (offset.y > 400f) 400f else if (offset.y < -400f) -400f else offset.y + pan.y
+                            )
+                        })
+
                 }
                 .clip(RoundedCornerShape(0.dp)),
             contentAlignment = Alignment.Center
@@ -871,7 +896,8 @@ fun SmallView(scale: Float, offset: Offset, cols: Int, rows: Int) {
                 Text(
                     text = "SCREEN",
                     style = LocalAppTypography.current.text_12_bold,
-                    color = LocalAppColor.current.textColorLight
+                    color = LocalAppColor.current.textColorLight,
+                    modifier = Modifier.scale(0.5f)
                 )
                 for (i in 0..cols) {
                     Row {
@@ -1036,6 +1062,83 @@ fun TypeOfSeat(type: String) {
             style = LocalAppTypography.current.text_16_bold,
             color = LocalAppColor.current.textBonusColorLight
         )
+    }
+}
+
+data class StrokeStyle(
+    val width: Dp = 4.dp,
+    val strokeCap: StrokeCap = StrokeCap.Round,
+    val glowRadius:Dp? = 4.dp
+    )
+
+
+@Composable
+fun CircleLoader(
+    modifier: Modifier = Modifier,
+    isVisible:Boolean,
+    color:Color,
+    secondColor:Color? = color,
+    tailLength:Float = 140f,
+    smoothTransition: Boolean = true,
+    strokeStyle: StrokeStyle = StrokeStyle(),
+    cycleDuration:Int = 1400
+){
+    val transition = rememberInfiniteTransition()
+    val spinAngel by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = cycleDuration,
+                easing = LinearEasing
+            ),
+            repeatMode = RepeatMode.Restart
+        ), label = ""
+    )
+    val tailToDisplay = remember { Animatable(0f) }
+
+    LaunchedEffect(isVisible) {
+        val targetTail = if (isVisible) tailLength else 0f
+        when {
+            smoothTransition  -> tailToDisplay.animateTo(
+            targetValue = targetTail,
+            animationSpec = tween(cycleDuration, easing = LinearEasing)
+        )
+            else -> tailToDisplay.snapTo(targetTail)
+        }
+    }
+    Canvas(
+        modifier
+            // Apply rotation animation
+            .rotate(spinAngel)
+            // Ensure the CircleLoader maintains a square aspect ratio
+            .aspectRatio(1f)
+    ) {
+        // Iterate over non-null colors
+        listOfNotNull(color, secondColor).forEachIndexed { index, color ->
+            // If it's not a primary color we rotate the canvas for 180 degrees
+            rotate(if (index == 0) 0f else 180f) {
+                // Create a sweep gradient brush for the loader
+                val brush = Brush.sweepGradient(
+                    0f to Color.Transparent,
+                    tailToDisplay.value / 360f to color,
+                    1f to Color.Transparent
+                )
+                // Set up paint object
+                val paint = setupPaint(strokeStyle, brush)
+
+                // Draw the loader tail
+                drawIntoCanvas { canvas ->
+                    canvas.drawArc(
+                        rect = size.toRect(),
+                        startAngle = 0f,
+                        sweepAngle = tailToDisplay.value,
+                        useCenter = false,
+                        paint = paint
+                    )
+                }
+            }
+        }
     }
 }
 

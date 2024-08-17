@@ -13,16 +13,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cinesmart.Components.ButtonBottomBar
 import com.example.cinesmart.Components.CustomButton
 import com.example.cinesmart.Components.FilmPerformInfoTopBar
+import com.example.cinesmart.Components.TagRankAndAge
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
 import com.example.cinesmart.Components.TypeOfSeat
 import com.example.cinesmart.Components.ZoomableGridDemo
@@ -88,6 +92,7 @@ fun PickseatScreen() {
 @Composable
 fun BottomBarPerform() {
     val fee = 20000
+    val seatName = "H3"
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,9 +109,16 @@ fun BottomBarPerform() {
             modifier = Modifier,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "The Batman: "+"Seat - H2", style = LocalAppTypography.current.text_18_bold, color = LocalAppColor.current.textColorLight, modifier = Modifier.padding(
+            Row(modifier = Modifier.padding(
                 bottom = LocalAppPadding.current.rounded_app_padding.dp,
-                ))
+            ), verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "The Batman: "+"Seat-", style = LocalAppTypography.current.text_18_bold, color = LocalAppColor.current.textColorLight)
+                Box(modifier =Modifier.wrapContentSize().clip(RoundedCornerShape(4.dp)).background(
+                    LocalAppColor.current.textColorLight).padding((LocalAppPadding.current.rounded_app_padding/2).dp)){
+                    Text(text = seatName, style = LocalAppTypography.current.text_16_bold, color = LocalAppColor.current.backgroundColorDarkBody
+                    )
+                }
+            }
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Estimated", style = LocalAppTypography.current.text_14_normal, color = LocalAppColor.current.textColorLight)
                 Text(text = fee.toString()+" VND", style = LocalAppTypography.current.text_18_bold, color = LocalAppColor.current.textColorLight)

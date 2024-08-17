@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import com.example.cinesmart.Components.CircleLoader
 import com.example.cinesmart.Components.GridPickSeat
 import com.example.cinesmart.Components.TypeOfSeat
 import com.example.cinesmart.Components.ZoomableGridDemo
@@ -64,9 +65,14 @@ fun MainApp() {
     if (loading.value) {
         WelcomeScreen({ loading.value = false })
     } else {
-        PickseatScreen()
-//        TypeOfSeat("")
-//        ZoomableGrid()
+//        PickseatScreen()
+        Box(modifier = Modifier.fillMaxSize().background(LocalAppColor.current.backgroundColorDarkBody), contentAlignment = Alignment.Center){
+            CircleLoader(
+                color = LocalAppColor.current.textColorOrange,
+                modifier = Modifier.size(50.dp),
+                isVisible = true
+            )
+        }
 
     }
 }
