@@ -1,6 +1,5 @@
 package com.example.cinesmart.Components
 
-import android.graphics.drawable.Icon
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -47,16 +46,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DateRange
-import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
@@ -79,7 +75,6 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
@@ -95,10 +90,8 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -132,7 +125,7 @@ fun Background(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun ImageWithTags(height: Int, rank: Float? = null, modifier: Modifier = Modifier, isShimmer:Boolean) {
+fun ImageWithTags(height: Int, rank: Float? = null, modifier: Modifier = Modifier) {
     //mock data
     val page = 2
     val image = "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg"
@@ -140,24 +133,17 @@ fun ImageWithTags(height: Int, rank: Float? = null, modifier: Modifier = Modifie
     val top = 1
     //------------
     Box(modifier = Modifier.height(height.dp)) {
-        if (isShimmer){
-            Box(modifier = Modifier
+        AsyncImage(
+            model = image/*ImageRequest.Builder(LocalContext.current).data(sliderList[page])
+            .crossfade(true).scale(Scale.FILL).build()*/,
+            contentDescription = null,
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(height.dp)
-                .background(shimmerBrush(targetValue = 1300f, showShimmer = isShimmer)))
-        } else{
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
+        )
 
-            AsyncImage(
-                model = image/*ImageRequest.Builder(LocalContext.current).data(sliderList[page])
-            .crossfade(true).scale(Scale.FILL).build()*/,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(height.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
-        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -208,7 +194,6 @@ fun TagRankAndAge(modifier: Modifier = Modifier, restrict_age: Int? = null, rank
 
 @Composable
 fun InfoFilm(
-    isShimmer: Boolean,
     isCenter: Boolean,
     isMaxlineText: Boolean = false,
     isComming: Boolean = false,
@@ -223,48 +208,39 @@ fun InfoFilm(
         modifier = Modifier.fillMaxWidth(),
     ) {
         if (isComming) {
-            if (isShimmer){
-                LoadingTextComponent()
-            }else{
-                Text(
-                    text = release_date,
-                    style = LocalAppTypography.current.text_14_bold,
-                    color = LocalAppColor.current.textBonusColorLight
-                )
-            }
+            Text(
+                text = release_date,
+                style = LocalAppTypography.current.text_14_bold,
+                color = LocalAppColor.current.textBonusColorLight
+            )
+
         }
         Spacer(modifier = Modifier.padding(2.dp))
-        if (isShimmer){
-            LoadingTextComponent()
-        } else{
 
-            Text(
-                text = nameFilm,
-                style = LocalAppTypography.current.text_18_bold,
-                color = LocalAppColor.current.textColorLight,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = if (isCenter) TextAlign.Center else TextAlign.Start,
-                maxLines = if (isMaxlineText) 1 else Int.MAX_VALUE,
-                overflow = TextOverflow.Ellipsis
+        Text(
+            text = nameFilm,
+            style = LocalAppTypography.current.text_18_bold,
+            color = LocalAppColor.current.textColorLight,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = if (isCenter) TextAlign.Center else TextAlign.Start,
+            maxLines = if (isMaxlineText) 1 else Int.MAX_VALUE,
+            overflow = TextOverflow.Ellipsis
 
-            )
-        }
+        )
+
         Spacer(modifier = Modifier.padding(2.dp))
-        if (isShimmer){
-            LoadingTextComponent()
-        }else{
 
-            Text(
-                text = tags,
-                style = LocalAppTypography.current.text_14_thin,
-                color = LocalAppColor.current.textBonusColorLight,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = if (isCenter) TextAlign.Center else TextAlign.Start,
-                maxLines = if (isMaxlineText) 1 else Int.MAX_VALUE,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        Text(
+            text = tags,
+            style = LocalAppTypography.current.text_14_thin,
+            color = LocalAppColor.current.textBonusColorLight,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = if (isCenter) TextAlign.Center else TextAlign.Start,
+            maxLines = if (isMaxlineText) 1 else Int.MAX_VALUE,
+            overflow = TextOverflow.Ellipsis
+        )
     }
+
 }
 
 @Composable
@@ -357,7 +333,13 @@ fun SearchComponent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CustomButton(size: Int, content: String, isFullWidth: Boolean, modifier: Modifier = Modifier, isNormal:Boolean = false) {
+fun CustomButton(
+    size: Int,
+    content: String,
+    isFullWidth: Boolean,
+    modifier: Modifier = Modifier,
+    isNormal: Boolean = false
+) {
     if (isFullWidth) {
 
         Box(
@@ -373,7 +355,7 @@ fun CustomButton(size: Int, content: String, isFullWidth: Boolean, modifier: Mod
             Text(
                 text = content,
                 style = if (size == 16) LocalAppTypography.current.text_16_bold else LocalAppTypography.current.text_18_bold,
-                color = if (!isNormal)LocalAppColor.current.textColorLight else LocalAppColor.current.textColorOrange,
+                color = if (!isNormal) LocalAppColor.current.textColorLight else LocalAppColor.current.textColorOrange,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -400,7 +382,7 @@ fun CustomButton(size: Int, content: String, isFullWidth: Boolean, modifier: Mod
             Text(
                 text = content,
                 style = if (size == 16) LocalAppTypography.current.text_16_bold else LocalAppTypography.current.text_18_bold,
-                color = if (!isNormal)LocalAppColor.current.textColorLight else LocalAppColor.current.textColorOrange,
+                color = if (!isNormal) LocalAppColor.current.textColorLight else LocalAppColor.current.textColorOrange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentSize(),
@@ -1190,13 +1172,20 @@ fun TagString(modifier: Modifier = Modifier, seatName: String) {
 }
 
 @Composable
-fun NormalTextField(modifier: Modifier = Modifier, value: String, label:String, leadingIcon:ImageVector, isLast:Boolean = false, changeValue: (String) -> Unit) {
+fun NormalTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    label: String,
+    leadingIcon: ImageVector,
+    isLast: Boolean = false,
+    changeValue: (String) -> Unit
+) {
     val isFocus = rememberSaveable {
         mutableStateOf(true)
     }
     androidx.compose.material.OutlinedTextField(
         value = value,
-        keyboardOptions = KeyboardOptions(imeAction = if (!isLast)ImeAction.Next else ImeAction.Done),
+        keyboardOptions = KeyboardOptions(imeAction = if (!isLast) ImeAction.Next else ImeAction.Done),
         modifier = Modifier
             .padding(
                 start = (2 * LocalAppPadding.current.rounded_app_padding).dp,
@@ -1209,7 +1198,13 @@ fun NormalTextField(modifier: Modifier = Modifier, value: String, label:String, 
                 isFocus.value = !isFocus.value
             },
         singleLine = true,
-        label = { Text(text = label, style = LocalAppTypography.current.text_12_bold, color = if (isFocus.value)LocalAppColor.current.textColorOrange else LocalAppColor.current.textBonusColorLight) },
+        label = {
+            Text(
+                text = label,
+                style = LocalAppTypography.current.text_12_bold,
+                color = if (isFocus.value) LocalAppColor.current.textColorOrange else LocalAppColor.current.textBonusColorLight
+            )
+        },
         onValueChange = { changeValue(it) },
         shape = RoundedCornerShape(10.dp),
         leadingIcon = {
@@ -1233,7 +1228,7 @@ fun NormalTextField(modifier: Modifier = Modifier, value: String, label:String, 
 
 
 @Composable
-fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
+fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush {
     return if (showShimmer) {
         val shimmerColors = listOf(
             Color.LightGray.copy(alpha = 0.6f),
@@ -1255,7 +1250,7 @@ fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
         )
     } else {
         Brush.linearGradient(
-            colors = listOf(Color.Transparent,Color.Transparent),
+            colors = listOf(Color.Transparent, Color.Transparent),
             start = Offset.Zero,
             end = Offset.Zero
         )
@@ -1263,11 +1258,13 @@ fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
 }
 
 @Composable
-fun LoadingTextComponent(){
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(24.dp)
-        .background(shimmerBrush(targetValue = 1300f, showShimmer = true)))
+fun LoadingTextComponent() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(24.dp)
+            .background(shimmerBrush(targetValue = 1300f, showShimmer = true))
+    )
 }
 
 @Composable

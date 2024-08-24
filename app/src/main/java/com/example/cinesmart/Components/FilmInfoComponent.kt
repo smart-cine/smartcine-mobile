@@ -1,10 +1,8 @@
 package com.example.cinesmart.Components
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateSizeAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,14 +11,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -41,7 +37,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -721,7 +716,8 @@ fun PerformCinema(index: Int, modifier: Modifier = Modifier) {
                     topEnd = 12.dp
                 ) else RoundedCornerShape(0.dp)
             )
-            .background(LocalAppColor.current.backgroundColorDarkHeader).animateContentSize()
+            .background(LocalAppColor.current.backgroundColorDarkHeader)
+            .animateContentSize()
 
     ) {
         Row(
@@ -807,9 +803,10 @@ fun GridPerform() {
 fun PerformItem(modifier: Modifier = Modifier) {
     val startTime = "09:00"
     val endTime = "11:03"
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .clickable { }, horizontalAlignment = Alignment.CenterHorizontally
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable { }, horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(modifier = Modifier, verticalAlignment = Alignment.Bottom) {
             Text(

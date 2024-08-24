@@ -33,7 +33,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlin.math.absoluteValue
 
 @Composable
-fun TrendingComponent(isShimmer: Boolean) {
+fun TrendingComponent() {
     Column(
         modifier = Modifier.padding(
             top = LocalAppPadding.current.rounded_app_padding.dp,
@@ -42,7 +42,7 @@ fun TrendingComponent(isShimmer: Boolean) {
     ) {
         TitleOfListFilmComponent("Trending Now")
         Spacer(modifier = Modifier.padding(top = LocalAppPadding.current.rounded_app_padding.dp))
-        CarouselCard(isShimmer)
+        CarouselCard()
     }
 }
 
@@ -78,7 +78,7 @@ fun TitleOfListFilmComponent(title: String, view: Boolean = false) {
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun CarouselCard(isShimmer:Boolean) {
+fun CarouselCard() {
     //mock data
     val sliderList = listOf(
         "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg",
@@ -134,9 +134,9 @@ fun CarouselCard(isShimmer:Boolean) {
         ) {
             Column {
 
-                ImageWithTags(300, 8.6f, isShimmer = isShimmer)
+                ImageWithTags(300, 8.6f)
                 Spacer(modifier = Modifier.padding(4.dp))
-                InfoFilm(isCenter = true, isShimmer = isShimmer)
+                InfoFilm(isCenter = true)
             }
         }
     }
@@ -144,7 +144,7 @@ fun CarouselCard(isShimmer:Boolean) {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun NewReleasesComponent(isShimmer:Boolean) {
+fun NewReleasesComponent() {
     val listFilm = listOf(
         "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg",
         "https://rachelsreviews.net/wp-content/uploads/2016/06/film.jpg",
@@ -169,9 +169,9 @@ fun NewReleasesComponent(isShimmer:Boolean) {
                         .wrapContentHeight()
                         .padding(end = if (index != (listFilm.size - 1)) 12.dp else 0.dp)
                 ) {
-                    ImageWithTags(260, 8.6f, isShimmer = isShimmer)
+                    ImageWithTags(260, 8.6f)
                     Spacer(modifier = Modifier.padding(4.dp))
-                    InfoFilm(isCenter = false, isMaxlineText = true, isComming = false, isShimmer = isShimmer)
+                    InfoFilm(isCenter = false, isMaxlineText = true, isComming = false)
                 }
             }
         }
@@ -179,7 +179,7 @@ fun NewReleasesComponent(isShimmer:Boolean) {
 }
 
 @Composable
-fun UpcommingComponent(isShimmer: Boolean) {
+fun UpcommingComponent() {
     val listFilm = listOf(
         "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg",
         "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg",
@@ -199,9 +199,9 @@ fun UpcommingComponent(isShimmer: Boolean) {
                         .width(150.dp)
                         .padding(end = if (index != listFilm.size - 1) 12.dp else 0.dp)
                 ) {
-                    ImageWithTags(height = 200, isShimmer = isShimmer)
+                    ImageWithTags(height = 200)
                     Spacer(modifier = Modifier.padding(4.dp))
-                    InfoFilm(isCenter = false, isMaxlineText = true, isComming = true, isShimmer = isShimmer)
+                    InfoFilm(isCenter = false, isMaxlineText = true, isComming = true)
                 }
             }
         }

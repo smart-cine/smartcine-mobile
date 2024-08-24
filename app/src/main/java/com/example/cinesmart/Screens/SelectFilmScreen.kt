@@ -1,6 +1,5 @@
 package com.example.cinesmart.Screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,11 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cinesmart.Components.Background
@@ -23,7 +19,6 @@ import com.example.cinesmart.Components.NewReleasesComponent
 import com.example.cinesmart.Components.TrendingComponent
 import com.example.cinesmart.Components.UpcommingComponent
 import com.example.cinesmart.ui.theme.LocalAppColor
-import com.example.cinesmart.ui.theme.LocalAppImage
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -32,10 +27,6 @@ import dev.chrisbanes.haze.hazeChild
 
 @Composable
 fun SelectFilmScreen(modifier: Modifier = Modifier) {
-    val isShowShimmer = rememberSaveable {
-        //TODO: assign is value of isLoading in viewmodel
-        false
-    }
     Background()
     Box(
         modifier = Modifier
@@ -71,17 +62,15 @@ fun SelectFilmScreen(modifier: Modifier = Modifier) {
                     .padding(innerPadding)
             ) {
                 item {
-                    TrendingComponent(isShowShimmer)
-                    NewReleasesComponent(isShowShimmer)
-                    UpcommingComponent(isShowShimmer)
+                    TrendingComponent()
+                    NewReleasesComponent()
+                    UpcommingComponent()
                 }
             }
         }
 
     }
 }
-
-
 
 
 @Preview(showBackground = true)
