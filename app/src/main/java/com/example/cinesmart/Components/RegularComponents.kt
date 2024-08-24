@@ -1,5 +1,6 @@
 package com.example.cinesmart.Components
 
+import android.graphics.drawable.Icon
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -7,7 +8,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -24,7 +24,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,11 +47,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DateRange
+import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
@@ -75,7 +79,9 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Brush
@@ -84,12 +90,15 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -123,25 +132,32 @@ fun Background(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun ImageWithTags(height: Int, rank: Float? = null, modifier: Modifier = Modifier) {
+fun ImageWithTags(height: Int, rank: Float? = null, modifier: Modifier = Modifier, isShimmer:Boolean) {
     //mock data
     val page = 2
     val image = "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg"
     val restrict_age = 16
     val top = 1
-
     //------------
     Box(modifier = Modifier.height(height.dp)) {
-        AsyncImage(
-            model = image/*ImageRequest.Builder(LocalContext.current).data(sliderList[page])
-            .crossfade(true).scale(Scale.FILL).build()*/,
-            contentDescription = null,
-            modifier = Modifier
+        if (isShimmer){
+            Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(height.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            contentScale = ContentScale.Crop
-        )
+                .background(shimmerBrush(targetValue = 1300f, showShimmer = isShimmer)))
+        } else{
+
+            AsyncImage(
+                model = image/*ImageRequest.Builder(LocalContext.current).data(sliderList[page])
+            .crossfade(true).scale(Scale.FILL).build()*/,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(height.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -192,6 +208,7 @@ fun TagRankAndAge(modifier: Modifier = Modifier, restrict_age: Int? = null, rank
 
 @Composable
 fun InfoFilm(
+    isShimmer: Boolean,
     isCenter: Boolean,
     isMaxlineText: Boolean = false,
     isComming: Boolean = false,
@@ -206,33 +223,47 @@ fun InfoFilm(
         modifier = Modifier.fillMaxWidth(),
     ) {
         if (isComming) {
+            if (isShimmer){
+                LoadingTextComponent()
+            }else{
+                Text(
+                    text = release_date,
+                    style = LocalAppTypography.current.text_14_bold,
+                    color = LocalAppColor.current.textBonusColorLight
+                )
+            }
+        }
+        Spacer(modifier = Modifier.padding(2.dp))
+        if (isShimmer){
+            LoadingTextComponent()
+        } else{
+
             Text(
-                text = release_date,
-                style = LocalAppTypography.current.text_14_bold,
-                color = LocalAppColor.current.textBonusColorLight
+                text = nameFilm,
+                style = LocalAppTypography.current.text_18_bold,
+                color = LocalAppColor.current.textColorLight,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = if (isCenter) TextAlign.Center else TextAlign.Start,
+                maxLines = if (isMaxlineText) 1 else Int.MAX_VALUE,
+                overflow = TextOverflow.Ellipsis
+
             )
         }
         Spacer(modifier = Modifier.padding(2.dp))
-        Text(
-            text = nameFilm,
-            style = LocalAppTypography.current.text_18_bold,
-            color = LocalAppColor.current.textColorLight,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = if (isCenter) TextAlign.Center else TextAlign.Start,
-            maxLines = if (isMaxlineText) 1 else Int.MAX_VALUE,
-            overflow = TextOverflow.Ellipsis
+        if (isShimmer){
+            LoadingTextComponent()
+        }else{
 
-        )
-        Spacer(modifier = Modifier.padding(2.dp))
-        Text(
-            text = tags,
-            style = LocalAppTypography.current.text_14_thin,
-            color = LocalAppColor.current.textBonusColorLight,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = if (isCenter) TextAlign.Center else TextAlign.Start,
-            maxLines = if (isMaxlineText) 1 else Int.MAX_VALUE,
-            overflow = TextOverflow.Ellipsis
-        )
+            Text(
+                text = tags,
+                style = LocalAppTypography.current.text_14_thin,
+                color = LocalAppColor.current.textBonusColorLight,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = if (isCenter) TextAlign.Center else TextAlign.Start,
+                maxLines = if (isMaxlineText) 1 else Int.MAX_VALUE,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
@@ -326,23 +357,23 @@ fun SearchComponent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CustomButton(size: Int, content: String, isFullWidth: Boolean, modifier: Modifier = Modifier) {
+fun CustomButton(size: Int, content: String, isFullWidth: Boolean, modifier: Modifier = Modifier, isNormal:Boolean = false) {
     if (isFullWidth) {
 
         Box(
             modifier = modifier
                 .clip(RoundedCornerShape(10.dp))
                 .background(
-                    LocalAppColor.current.textColorOrange
+                    if (!isNormal) LocalAppColor.current.textColorOrange else LocalAppColor.current.backgroundColorDarkHeader
                 )
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(top = (size / 2).dp, bottom = (size / 2).dp)
+                .padding(top = size.dp, bottom = size.dp)
         ) {
             Text(
                 text = content,
                 style = if (size == 16) LocalAppTypography.current.text_16_bold else LocalAppTypography.current.text_18_bold,
-                color = LocalAppColor.current.textColorLight,
+                color = if (!isNormal)LocalAppColor.current.textColorLight else LocalAppColor.current.textColorOrange,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -355,7 +386,7 @@ fun CustomButton(size: Int, content: String, isFullWidth: Boolean, modifier: Mod
             modifier = Modifier
                 .clip(RoundedCornerShape(10.dp))
                 .background(
-                    LocalAppColor.current.buttonColorDarkCenter
+                    if (!isNormal) LocalAppColor.current.textColorOrange else LocalAppColor.current.backgroundColorDarkHeader
                 )
                 .wrapContentHeight()
                 .requiredWidth(80.dp)
@@ -369,7 +400,7 @@ fun CustomButton(size: Int, content: String, isFullWidth: Boolean, modifier: Mod
             Text(
                 text = content,
                 style = if (size == 16) LocalAppTypography.current.text_16_bold else LocalAppTypography.current.text_18_bold,
-                color = LocalAppColor.current.textColorLight,
+                color = if (!isNormal)LocalAppColor.current.textColorLight else LocalAppColor.current.textColorOrange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentSize(),
@@ -445,18 +476,19 @@ fun YoutubePlayerComponent(
 }
 
 @Composable
-fun ButtonBottomBar(content:String, modifier: Modifier = Modifier) {
+fun ButtonBottomBar(content: String, modifier: Modifier = Modifier, isNormal: Boolean = false) {
     CustomButton(
         size = 16, content = content, isFullWidth = true, modifier = modifier
             .shadow(
                 RoundedCornerShape(10.dp),
-                LocalAppColor.current.buttonColorDarkCenter,
+                if (!isNormal) LocalAppColor.current.textColorOrange else LocalAppColor.current.textBonusColorLight,
                 5.dp,
                 0.dp,
                 0.dp,
                 0.dp
             )
-            .clickable { }
+            .clickable { },
+        isNormal = isNormal
     )
 }
 
@@ -687,7 +719,6 @@ fun DayFilterRowComponent(modifier: Modifier = Modifier) {
         }
     }
 }
-
 
 
 @Preview
@@ -1064,21 +1095,21 @@ fun TypeOfSeat(type: String) {
 data class StrokeStyle(
     val width: Dp = 4.dp,
     val strokeCap: StrokeCap = StrokeCap.Round,
-    val glowRadius:Dp? = 4.dp
-    )
+    val glowRadius: Dp? = 4.dp
+)
 
 
 @Composable
 fun CircleLoader(
     modifier: Modifier = Modifier,
-    isVisible:Boolean,
-    color:Color,
-    secondColor:Color? = color,
-    tailLength:Float = 140f,
+    isVisible: Boolean,
+    color: Color,
+    secondColor: Color? = color,
+    tailLength: Float = 140f,
     smoothTransition: Boolean = true,
     strokeStyle: StrokeStyle = StrokeStyle(),
-    cycleDuration:Int = 1400
-){
+    cycleDuration: Int = 1400
+) {
     val transition = rememberInfiniteTransition()
     val spinAngel by transition.animateFloat(
         initialValue = 0f,
@@ -1096,10 +1127,11 @@ fun CircleLoader(
     LaunchedEffect(isVisible) {
         val targetTail = if (isVisible) tailLength else 0f
         when {
-            smoothTransition  -> tailToDisplay.animateTo(
-            targetValue = targetTail,
-            animationSpec = tween(cycleDuration, easing = LinearEasing)
-        )
+            smoothTransition -> tailToDisplay.animateTo(
+                targetValue = targetTail,
+                animationSpec = tween(cycleDuration, easing = LinearEasing)
+            )
+
             else -> tailToDisplay.snapTo(targetTail)
         }
     }
@@ -1139,12 +1171,103 @@ fun CircleLoader(
 }
 
 @Composable
-fun TagString(modifier: Modifier = Modifier, seatName:String){
-    Box(modifier =Modifier.wrapContentSize().clip(RoundedCornerShape(4.dp)).background(
-        LocalAppColor.current.textColorLight).padding((LocalAppPadding.current.rounded_app_padding/2).dp)){
-        Text(text = seatName, style = LocalAppTypography.current.text_16_bold, color = LocalAppColor.current.backgroundColorDarkBody
+fun TagString(modifier: Modifier = Modifier, seatName: String) {
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .clip(RoundedCornerShape(4.dp))
+            .background(
+                LocalAppColor.current.textColorLight
+            )
+            .padding((LocalAppPadding.current.rounded_app_padding / 2).dp)
+    ) {
+        Text(
+            text = seatName,
+            style = LocalAppTypography.current.text_16_bold,
+            color = LocalAppColor.current.backgroundColorDarkBody
         )
     }
+}
+
+@Composable
+fun NormalTextField(modifier: Modifier = Modifier, value: String, label:String, leadingIcon:ImageVector, isLast:Boolean = false, changeValue: (String) -> Unit) {
+    val isFocus = rememberSaveable {
+        mutableStateOf(true)
+    }
+    androidx.compose.material.OutlinedTextField(
+        value = value,
+        keyboardOptions = KeyboardOptions(imeAction = if (!isLast)ImeAction.Next else ImeAction.Done),
+        modifier = Modifier
+            .padding(
+                start = (2 * LocalAppPadding.current.rounded_app_padding).dp,
+                end = (2 * LocalAppPadding.current.rounded_app_padding).dp,
+                top = LocalAppPadding.current.rounded_app_padding.dp,
+                bottom = LocalAppPadding.current.rounded_app_padding.dp
+            )
+            .fillMaxWidth()
+            .onFocusChanged {
+                isFocus.value = !isFocus.value
+            },
+        singleLine = true,
+        label = { Text(text = label, style = LocalAppTypography.current.text_12_bold, color = if (isFocus.value)LocalAppColor.current.textColorOrange else LocalAppColor.current.textBonusColorLight) },
+        onValueChange = { changeValue(it) },
+        shape = RoundedCornerShape(10.dp),
+        leadingIcon = {
+            Icon(
+                imageVector = leadingIcon,
+                contentDescription = "",
+                tint = if (isFocus.value) LocalAppColor.current.textColorOrange else LocalAppColor.current.textBonusColorLight
+            )
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            cursorColor = LocalAppColor.current.textColorOrange,
+            disabledTextColor = LocalAppColor.current.textBonusColorLight,
+            backgroundColor = LocalAppColor.current.textColorOrange.copy(alpha = .2f),
+            focusedIndicatorColor = LocalAppColor.current.textColorOrange,
+            unfocusedIndicatorColor = LocalAppColor.current.textBonusColorLight,
+            textColor = LocalAppColor.current.textColorOrange,
+        ),
+        textStyle = LocalAppTypography.current.text_18_bold.copy(color = LocalAppColor.current.textColorOrange),
+    )
+}
+
+
+@Composable
+fun shimmerBrush(showShimmer: Boolean = true,targetValue:Float = 1000f): Brush {
+    return if (showShimmer) {
+        val shimmerColors = listOf(
+            Color.LightGray.copy(alpha = 0.6f),
+            Color.LightGray.copy(alpha = 0.2f),
+            Color.LightGray.copy(alpha = 0.6f),
+        )
+        val transition = rememberInfiniteTransition()
+        val translateAnimation = transition.animateFloat(
+            initialValue = 0f,
+            targetValue = targetValue,
+            animationSpec = infiniteRepeatable(
+                animation = tween(800), repeatMode = RepeatMode.Reverse
+            )
+        )
+        Brush.linearGradient(
+            colors = shimmerColors,
+            start = Offset.Zero,
+            end = Offset(x = translateAnimation.value, y = translateAnimation.value)
+        )
+    } else {
+        Brush.linearGradient(
+            colors = listOf(Color.Transparent,Color.Transparent),
+            start = Offset.Zero,
+            end = Offset.Zero
+        )
+    }
+}
+
+@Composable
+fun LoadingTextComponent(){
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(24.dp)
+        .background(shimmerBrush(targetValue = 1300f, showShimmer = true)))
 }
 
 @Composable

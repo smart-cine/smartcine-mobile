@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.BottomNavigation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,9 +39,16 @@ import com.example.cinesmart.Components.CircleLoader
 import com.example.cinesmart.Components.GridPickSeat
 import com.example.cinesmart.Components.TypeOfSeat
 import com.example.cinesmart.Components.ZoomableGridDemo
+import com.example.cinesmart.Screens.FilmInfoScreen
+import com.example.cinesmart.Screens.LoginScreen
 import com.example.cinesmart.Screens.PaymentScreen
 import com.example.cinesmart.Screens.PaymentSuccessScreen
 import com.example.cinesmart.Screens.PickseatScreen
+import com.example.cinesmart.Screens.ProfileScreen
+import com.example.cinesmart.Screens.RegisterScreen
+import com.example.cinesmart.Screens.SelectFilmPerTheaterScreen
+import com.example.cinesmart.Screens.SelectFilmScreen
+import com.example.cinesmart.Screens.SelectTheaterScreen
 import com.example.cinesmart.Screens.WelcomeScreen
 import com.example.cinesmart.ui.theme.CineSmartTheme
 import com.example.cinesmart.ui.theme.LocalAppColor
@@ -67,7 +75,10 @@ fun MainApp() {
     if (loading.value) {
         WelcomeScreen({ loading.value = false })
     } else {
-        PaymentSuccessScreen()
+        SelectFilmScreen()
     }
+//    BottomNavigation {
+//
+//    }
 }
 

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
@@ -31,6 +32,10 @@ import dev.chrisbanes.haze.hazeChild
 
 @Composable
 fun SelectFilmScreen(modifier: Modifier = Modifier) {
+    val isShowShimmer = rememberSaveable {
+        //TODO: assign is value of isLoading in viewmodel
+        false
+    }
     Background()
     Box(
         modifier = Modifier
@@ -66,9 +71,9 @@ fun SelectFilmScreen(modifier: Modifier = Modifier) {
                     .padding(innerPadding)
             ) {
                 item {
-                    TrendingComponent()
-                    NewReleasesComponent()
-                    UpcommingComponent()
+                    TrendingComponent(isShowShimmer)
+                    NewReleasesComponent(isShowShimmer)
+                    UpcommingComponent(isShowShimmer)
                 }
             }
         }

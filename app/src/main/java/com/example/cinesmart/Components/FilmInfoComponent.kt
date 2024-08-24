@@ -864,7 +864,7 @@ fun CinemaLogoComponent(focus: Boolean) {
     Column(
         modifier = Modifier
             .padding((LocalAppPadding.current.rounded_app_padding).dp)
-            .width(70.dp)
+            .size(70.dp)
     ) {
         AsyncImage(
             model = "https://cdn.nhanlucnganhluat.vn/uploads/images/D69545BE/logo/2019-04/pictures_library_6235_20180102135750_4563.jpg",

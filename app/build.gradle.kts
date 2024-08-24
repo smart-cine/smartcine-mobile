@@ -52,6 +52,9 @@ android {
 }
 
 dependencies {
+    val nav_version = "2.7.7"
+
+    implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("dev.chrisbanes.haze:haze-jetpack-compose:0.4.1")
     val lifecycle_version = "2.3.0"
 // youtube play
@@ -63,7 +66,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
-
+    implementation("androidx.compose.material:material:1.6.8")
     implementation ("androidx.palette:palette-ktx:1.0.0")
 
     implementation("androidx.core:core-ktx:1.3.2")
