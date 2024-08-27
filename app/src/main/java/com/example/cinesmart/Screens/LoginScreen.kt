@@ -38,6 +38,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cinesmart.Components.ButtonBottomBar
 import com.example.cinesmart.Components.NormalTextField
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.R
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppImage
@@ -46,7 +48,7 @@ import com.example.cinesmart.ui.theme.LocalAppTypography
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(mainNavHostController:CineSmartNavController, navController: CineSmartNavController) {
     val email = rememberSaveable {
         mutableStateOf("")
     }
@@ -59,6 +61,7 @@ fun LoginScreen() {
     val retypePassword = rememberSaveable {
         mutableStateOf("")
     }
+    hideSystemNavBars()
     Image(
         painter = painterResource(LocalAppImage.current.normal_theme),
         contentDescription = "",
@@ -114,7 +117,9 @@ fun LoginScreen() {
         ButtonBottomBar(
             content = "Login",
             modifier = Modifier.padding((2*LocalAppPadding.current.rounded_app_padding).dp),
-            isNormal = false
+            isNormal = false,
+            mainNavHostController = mainNavHostController,
+            destinationNavigation = Screens.FilmFragment.route
         )
         Text(
             text = "Haven't had an account? Let create.",
@@ -125,13 +130,16 @@ fun LoginScreen() {
         ButtonBottomBar(
             content = "Register",
             modifier = Modifier.padding((2*LocalAppPadding.current.rounded_app_padding).dp),
-            isNormal = true
+            isNormal = true,
+            mainNavHostController = navController,
+            destinationNavigation = Screens.RegisterScreen.route
+
         )
     }
 }
 
-@Preview
-@Composable
-fun PreviewLoginScreenComponents() {
-    LoginScreen()
-}
+//@Preview
+//@Composable
+//fun PreviewLoginScreenComponents() {
+//    LoginScreen()
+//}

@@ -9,12 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomNavigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -25,21 +25,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.cinesmart.Components.DayFilterRowComponent
 import com.example.cinesmart.Components.TagRankAndAge
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
 
 
 @Composable
-fun SelectFilmPerTheaterScreen() {
+fun SelectFilmPerTheaterScreen(mainNavHostController: CineSmartNavController) {
     val nameTheater = "Beta Tran Quang Khai"
     val listFilmPerCinema = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
+    hideSystemNavBars()
     Scaffold(
         topBar = {
             TopBarTitleAndReturnButton(
@@ -52,12 +54,13 @@ fun SelectFilmPerTheaterScreen() {
                         bottom = LocalAppPadding.current.rounded_app_padding.dp,
                         start = LocalAppPadding.current.rounded_app_padding.dp,
                         end = LocalAppPadding.current.rounded_app_padding.dp
-                    )
+                    ),
+                mainNavHostController = mainNavHostController
             )
         }
     ) { innerPadding ->
         Scaffold(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
             topBar = {
                 Box(modifier = Modifier.background(LocalAppColor.current.backgroundColorDarkBody)) {
                     DayFilterRowComponent()
@@ -75,7 +78,7 @@ fun SelectFilmPerTheaterScreen() {
                     .background(LocalAppColor.current.backgroundColorDarkHeader)
             ) {
                 itemsIndexed(listFilmPerCinema) { index, item ->
-                    PerformPerFilmItems()
+                    PerformPerFilmItems(mainNavHostController = mainNavHostController)
                 }
             }
         }
@@ -85,7 +88,7 @@ fun SelectFilmPerTheaterScreen() {
 }
 
 @Composable
-fun PerformPerFilmItems() {
+fun PerformPerFilmItems(mainNavHostController: CineSmartNavController) {
     val filmName = "Deadpool and Wolverine"
     val filmPoster = ""
     val filmTrailer = ""
@@ -99,7 +102,9 @@ fun PerformPerFilmItems() {
             .padding(LocalAppPadding.current.rounded_app_padding.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { mainNavHostController.navController.navigate(Screens.FilmInfoScreen.route) },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -111,11 +116,15 @@ fun PerformPerFilmItems() {
             Icon(
                 imageVector = Icons.Rounded.KeyboardArrowRight,
                 contentDescription = "",
-                modifier = Modifier.clickable { })
+                tint = LocalAppColor.current.textColorLight,
+                modifier = Modifier
+                    .clickable { mainNavHostController.navController.navigate(Screens.FilmInfoScreen.route) })
         }
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(
-            bottom = LocalAppPadding.current.rounded_app_padding.dp
-        )) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(
+                bottom = LocalAppPadding.current.rounded_app_padding.dp
+            )
+        ) {
             TagRankAndAge(restrict_age = restrict_age)
             Text(
                 text = tag,
@@ -149,7 +158,10 @@ fun PerformPerFilmItems() {
                             end = LocalAppPadding.current.rounded_app_padding.dp,
                         )
                     )
-                    ListPerformPerTypeCinema(type = type)
+                    ListPerformPerTypeCinema(
+                        type = type,
+                        mainNavHostController = mainNavHostController
+                    )
                     Spacer(modifier = Modifier.padding(bottom = LocalAppPadding.current.rounded_app_padding.dp))
                 }
             }
@@ -165,23 +177,27 @@ fun PerformPerFilmItems() {
 }
 
 @Composable
-fun ListPerformPerTypeCinema(type: String) {
+fun ListPerformPerTypeCinema(type: String, mainNavHostController: CineSmartNavController) {
     val listPerformOfType = listOf(1, 2, 3, 4, 5, 6)
     for (row in 0..(listPerformOfType.size - 1) / 2) {
         Row() {
-            PerformOfType(modifier = Modifier.weight(1f))
-            PerformOfType(modifier = Modifier.weight(1f))
+            PerformOfType(modifier = Modifier.weight(1f),mainNavHostController = mainNavHostController
+            )
+            PerformOfType(modifier = Modifier.weight(1f), mainNavHostController = mainNavHostController)
         }
     }
     if ((listPerformOfType.size - 1) % 2 == 1) {
         Row() {
-            PerformOfType(modifier = Modifier.fillMaxWidth(0.5f))
+            PerformOfType(
+                modifier = Modifier.fillMaxWidth(0.5f),
+                mainNavHostController = mainNavHostController
+            )
         }
     }
 }
 
 @Composable
-fun PerformOfType(modifier: Modifier = Modifier) {
+fun PerformOfType(modifier: Modifier = Modifier, mainNavHostController: CineSmartNavController) {
     val startTime = "20:25"
     val endTime = "22:28"
     Row(
@@ -197,6 +213,9 @@ fun PerformOfType(modifier: Modifier = Modifier) {
                 LocalAppColor.current.backgroundColorDarkHeader
             )
             .border(1.dp, LocalAppColor.current.textBonusColorLight, RoundedCornerShape(10.dp))
+            .clickable {
+                mainNavHostController.navController.navigate(Screens.PickSeatScreen.route)
+            }
             .padding(
                 top = LocalAppPadding.current.rounded_app_padding.dp,
                 bottom = LocalAppPadding.current.rounded_app_padding.dp,
@@ -217,8 +236,8 @@ fun PerformOfType(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
-@Composable
-fun SelectFilmPerTheaterScreenComponents() {
-    PerformPerFilmItems()
-}
+//@Preview
+//@Composable
+//fun SelectFilmPerTheaterScreenComponents() {
+//    PerformPerFilmItems()
+//}

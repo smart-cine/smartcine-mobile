@@ -23,12 +23,15 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.cinesmart.Components.ButtonBottomBar
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 
 
 @Composable
-fun PaymentSuccessScreen() {
+fun PaymentSuccessScreen(mainNavHostController:CineSmartNavController) {
+    hideSystemNavBars()
     Scaffold(
         topBar = {
             TopBarTitleAndReturnButton(
@@ -37,7 +40,8 @@ fun PaymentSuccessScreen() {
                     bottom = LocalAppPadding.current.rounded_app_padding.dp,
                     start = LocalAppPadding.current.rounded_app_padding.dp,
                     end = LocalAppPadding.current.rounded_app_padding.dp
-                )
+                ),
+                mainNavHostController = mainNavHostController
             )
         }
     ) { innerPadding ->
@@ -56,15 +60,17 @@ fun PaymentSuccessScreen() {
                 modifier = Modifier.padding(
                     start = LocalAppPadding.current.rounded_app_padding.dp,
                     end = LocalAppPadding.current.rounded_app_padding.dp
-                )
+                ),
+                mainNavHostController = mainNavHostController,
+                destinationNavigation = Screens.FilmFragment.route
             )
             Spacer(modifier = Modifier.padding(bottom = LocalAppPadding.current.top_app_padding.dp))
         }
     }
 }
 
-@Preview
-@Composable
-fun PreviewPaymentSuccess() {
-    PaymentSuccessScreen()
-}
+//@Preview
+//@Composable
+//fun PreviewPaymentSuccess() {
+//    PaymentSuccessScreen()
+//}

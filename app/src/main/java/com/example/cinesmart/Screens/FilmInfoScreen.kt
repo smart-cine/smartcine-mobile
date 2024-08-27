@@ -14,11 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.cinesmart.Components.Background
 import com.example.cinesmart.Components.ButtonBottomBar
 import com.example.cinesmart.Components.FilmInfoBlock
 import com.example.cinesmart.Components.NavigationBarFilmInfo
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import dev.chrisbanes.haze.HazeState
@@ -28,7 +31,8 @@ import dev.chrisbanes.haze.hazeChild
 fun InfoFilmHeader(
     modifier: Modifier = Modifier,
     navigateState: String,
-    changeNavigateState: () -> Unit
+    changeNavigateState: () -> Unit,
+    mainNavHostController:CineSmartNavController
 ) {
     Column(modifier = modifier) {
         TopBarTitleAndReturnButton(
@@ -37,7 +41,8 @@ fun InfoFilmHeader(
                 end = LocalAppPadding.current.rounded_app_padding.dp,
                 top = LocalAppPadding.current.top_app_padding.dp,
                 bottom = LocalAppPadding.current.rounded_app_padding.dp
-            )
+            ),
+            mainNavHostController = mainNavHostController
         )
         NavigationBarFilmInfo(
             navigateState = navigateState,
@@ -47,10 +52,10 @@ fun InfoFilmHeader(
 }
 
 @Composable
-fun FilmInfoScreen() {
+fun FilmInfoScreen(mainNavHostController: CineSmartNavController) {
     val nameFilm = "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô"
     val navigateState = rememberSaveable {
-        mutableStateOf("Sessions")
+        mutableStateOf("About")
 
     }
     var changeNavigateState: () -> Unit = {
@@ -58,6 +63,7 @@ fun FilmInfoScreen() {
         if (navigateState.value == "About") navigateState.value =
             "Sessions" else navigateState.value = "About"
     }
+    hideSystemNavBars()
     Background()
     Box(
         modifier = Modifier
@@ -73,37 +79,25 @@ fun FilmInfoScreen() {
                         .hazeChild(state = hazeState),
                     navigateState = navigateState.value,
                     changeNavigateState = changeNavigateState,
-                )
-            },
-            bottomBar = {
-                Box(
-                    modifier = Modifier
-                        .background(LocalAppColor.current.backgroundColorDarkHeader)
-                        .padding(
-                            top = LocalAppPadding.current.rounded_app_padding.dp,
-                            start = LocalAppPadding.current.rounded_app_padding.dp,
-                            end = LocalAppPadding.current.rounded_app_padding.dp,
-                            bottom = (5 * LocalAppPadding.current.rounded_app_padding).dp
-                        )
-                ) {
+                    mainNavHostController = mainNavHostController
 
-                    ButtonBottomBar("Select Session")
-                }
+                )
             },
             contentColor = Color.Transparent,
             containerColor = Color.Transparent,
         ) { innerPadding ->
             FilmInfoBlock(
                 modifier = Modifier.padding(innerPadding),
-                navigateState = navigateState.value
+                navigateState = navigateState.value,
+                mainNavHostController = mainNavHostController
             )
         }
 
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewComposable() {
-    FilmInfoScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewComposable() {
+//    FilmInfoScreen()
+//}

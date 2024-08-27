@@ -31,14 +31,17 @@ import com.example.cinesmart.Components.TagString
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
 import com.example.cinesmart.Components.TypeOfSeat
 import com.example.cinesmart.Components.ZoomableGridDemo
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
 
 
 @Composable
-fun PickseatScreen() {
+fun PickseatScreen(mainNavHostController:CineSmartNavController) {
     val nameCinema = "CGV Vincome Grandpark"
+    hideSystemNavBars()
     Scaffold(
         topBar = {
             Column(Modifier.background(LocalAppColor.current.backgroundColorDarkHeader)) {
@@ -49,7 +52,8 @@ fun PickseatScreen() {
                         end = LocalAppPadding.current.rounded_app_padding.dp,
                         top = LocalAppPadding.current.top_app_padding.dp,
                         bottom = LocalAppPadding.current.rounded_app_padding.dp
-                    )
+                    ),
+                    mainNavHostController = mainNavHostController
                 )
                 FilmPerformInfoTopBar(
                     modifier = Modifier
@@ -63,7 +67,7 @@ fun PickseatScreen() {
             }
         },
         bottomBar = {
-            BottomBarPerform()
+            BottomBarPerform(mainNavHostController = mainNavHostController)
         }
     ) { innnerPadding ->
         Column(
@@ -91,7 +95,7 @@ fun PickseatScreen() {
 }
 
 @Composable
-fun BottomBarPerform() {
+fun BottomBarPerform(mainNavHostController:CineSmartNavController) {
     val fee = 20000
     val seatName = "H3"
     Box(
@@ -121,7 +125,7 @@ fun BottomBarPerform() {
                 Text(text = fee.toString()+" VND", style = LocalAppTypography.current.text_18_bold, color = LocalAppColor.current.textColorLight)
             }
             Spacer(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp))
-            ButtonBottomBar("Top Up")
+            ButtonBottomBar("Top Up", mainNavHostController = mainNavHostController, destinationNavigation = Screens.PaymentScreen.route)
         }
     }
 }
@@ -141,8 +145,8 @@ fun TypeOfSeatContainer(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(backgroundColor = Color.BLUE.toLong())
-@Composable
-fun PreviewScreenPickseat() {
-    PickseatScreen()
-}
+//@Preview(backgroundColor = Color.BLUE.toLong())
+//@Composable
+//fun PreviewScreenPickseat() {
+//    PickseatScreen()
+//}

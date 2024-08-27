@@ -29,12 +29,15 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.cinesmart.Components.CinemaLogoComponent
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
 
 @Composable
-fun SelectTheaterScreen(){
+fun SelectTheaterScreen(mainNavHostController:CineSmartNavController){
+    hideSystemNavBars()
     Scaffold(
         topBar = {
             TopBarTitleAndReturnButton(title = "Cinema Selection", modifier = Modifier
@@ -46,7 +49,7 @@ fun SelectTheaterScreen(){
                     bottom = LocalAppPadding.current.rounded_app_padding.dp,
                     start = LocalAppPadding.current.rounded_app_padding.dp,
                     end = LocalAppPadding.current.rounded_app_padding.dp
-                ))
+                ), mainNavHostController = mainNavHostController)
         }
     ) {innerPadding->
         Column(
@@ -57,7 +60,7 @@ fun SelectTheaterScreen(){
         ) {
             ListTypeCinema()
             ListCinema(
-                Modifier
+                modifier = Modifier
                     .padding(LocalAppPadding.current.rounded_app_padding.dp)
                     .clip(
                         RoundedCornerShape(10.dp)
@@ -65,18 +68,19 @@ fun SelectTheaterScreen(){
                     .background(
                         LocalAppColor.current.backgroundColorDarkHeader
                     )
-                    .padding(LocalAppPadding.current.rounded_app_padding.dp))
+                    .padding(LocalAppPadding.current.rounded_app_padding.dp),
+                mainNavHostController = mainNavHostController)
 
         }
     }
 }
 
 @Composable
-fun ListCinema(modifier: Modifier = Modifier) {
+fun ListCinema(modifier: Modifier = Modifier, mainNavHostController:CineSmartNavController) {
     val listCinema = listOf(1,2,3,4,5,6,7,8,9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
     LazyColumn(modifier = modifier) {
         itemsIndexed(listCinema){index, item->
-            CinemaSelectionItem(Modifier.clip(RoundedCornerShape(10.dp)).clickable {  }.padding(
+            CinemaSelectionItem(Modifier.clip(RoundedCornerShape(10.dp)).clickable { mainNavHostController.navController.navigate(Screens.SelectFilmPerTheaterScreen.route) }.padding(
                 LocalAppPadding.current.rounded_app_padding.dp
             ))
         }
@@ -93,7 +97,7 @@ fun CinemaSelectionItem(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp))
             Text(text = cinemaName, style = LocalAppTypography.current.text_16_bold, color = LocalAppColor.current.textColorLight)
         }
-        Icon(imageVector = Icons.Rounded.KeyboardArrowRight, contentDescription = "", modifier = Modifier.clickable {  })
+        Icon(imageVector = Icons.Rounded.KeyboardArrowRight, contentDescription = "", tint = LocalAppColor.current.textColorLight)
 
     }
 }
@@ -131,8 +135,8 @@ fun ListTypeCinema() {
     }
 }
 
-@Preview
-@Composable
-fun PreviewSelectTheaterScreenComponent(){
-    ListCinema()
-}
+//@Preview
+//@Composable
+//fun PreviewSelectTheaterScreenComponent(){
+//    ListCinema()
+//}

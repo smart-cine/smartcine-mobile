@@ -24,17 +24,21 @@ import com.example.cinesmart.Components.CommentInPostComponent
 import com.example.cinesmart.Components.RankingBoardComponent
 import com.example.cinesmart.Components.StarAverage
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
 
 
 @Composable
-fun AllCommentsScreen(modifier: Modifier = Modifier) {
+fun AllCommentsScreen(modifier: Modifier = Modifier, mainNavHostController:CineSmartNavController) {
     val filmName: String = "Bat Man"
     val totalRanking: Int = 5500
     //TODO: Render All Server's Comment in separate page
     val listComment = listOf(1,2,3,4,5,6,7)
+
+    hideSystemNavBars()
     Scaffold(
         topBar = {
             Column() {
@@ -49,7 +53,8 @@ fun AllCommentsScreen(modifier: Modifier = Modifier) {
                             end = LocalAppPadding.current.rounded_app_padding.dp,
                             top = LocalAppPadding.current.top_app_padding.dp,
                             bottom = LocalAppPadding.current.rounded_app_padding.dp
-                        )
+                        ),
+                    mainNavHostController = mainNavHostController
                 )
                 Row(
                     modifier = Modifier
@@ -117,15 +122,15 @@ fun AllCommentsScreen(modifier: Modifier = Modifier) {
                 )
             }
             itemsIndexed(listComment){index, item ->
-                CommentComponent(comment = item, showReply = true)
+                CommentComponent(comment = item, showReply = true, mainNavHostController = mainNavHostController)
             }
         }
 
     }
 }
 
-@Preview
-@Composable
-fun PreviewScreen() {
-    AllCommentsScreen()
-}
+//@Preview
+//@Composable
+//fun PreviewScreen() {
+//    AllCommentsScreen()
+//}

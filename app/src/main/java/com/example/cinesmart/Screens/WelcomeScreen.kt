@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cinesmart.Components.hideSystemNavBars
 import com.example.cinesmart.R
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppImage
@@ -30,7 +31,7 @@ import kotlinx.coroutines.Delay
 import kotlinx.coroutines.delay
 
 @Composable
-fun WelcomeScreen(onTimeout:()->Unit) {
+fun WelcomeScreen() {
     val infiniteTransition = rememberInfiniteTransition()
     val scaleAnimation by infiniteTransition.animateFloat(
         initialValue = 1.5f,
@@ -40,11 +41,7 @@ fun WelcomeScreen(onTimeout:()->Unit) {
             repeatMode = RepeatMode.Reverse
         )
     )
-    LaunchedEffect(onTimeout) {
-        //Fetch data Select film screen
-        delay(2000)
-        onTimeout()
-    }
+    hideSystemNavBars()
     Box(modifier = Modifier
         .fillMaxSize()){
         Image(painter = painterResource(LocalAppImage.current.normal_theme), contentDescription = "", modifier = Modifier

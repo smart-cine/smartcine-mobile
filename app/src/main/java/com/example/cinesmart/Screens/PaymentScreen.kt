@@ -1,6 +1,7 @@
 package com.example.cinesmart.Screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,8 @@ import coil.compose.AsyncImage
 import com.example.cinesmart.Components.TagRankAndAge
 import com.example.cinesmart.Components.TagString
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
@@ -227,7 +230,8 @@ fun Circle(size: Int, type: String = "normal") {
 }
 
 @Composable
-fun PaymentScreen() {
+fun PaymentScreen(mainNavHostController:CineSmartNavController) {
+    hideSystemNavBars()
     Scaffold(
         topBar = {
             TopBarTitleAndReturnButton(
@@ -239,7 +243,8 @@ fun PaymentScreen() {
                         start = LocalAppPadding.current.rounded_app_padding.dp,
                         end = LocalAppPadding.current.rounded_app_padding.dp,
                         bottom = LocalAppPadding.current.rounded_app_padding.dp
-                    )
+                    ),
+                mainNavHostController = mainNavHostController
             )
         },
     ) { innerPadding ->
@@ -250,32 +255,37 @@ fun PaymentScreen() {
                     .background(LocalAppColor.current.backgroundColorDarkBody)
                     .padding(innerPadding)
             )
-            ListBanksComponent()
+            ListBanksComponent(mainNavHostController = mainNavHostController)
         }
     }
 }
 
 @Composable
-fun ListBanksComponent() {
+fun ListBanksComponent(mainNavHostController: CineSmartNavController) {
     Column {
         BankComponent(
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLeYoMVenMbgWL1FxDJPKuQvJD6R0KdnXE7A&s",
-            "VNPAY"
+            "VNPAY",
+            mainNavHostController = mainNavHostController
         )
         BankComponent(
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsVPgwFIh0CtjqccQx6spbWxxJ-BQisfmi-sM1qPIVKMw-Vw7Q_mxAa_DjzWO5OwneXgQ&usqp=CAU",
-            "MOMO"
+            "MOMO" ,
+            mainNavHostController = mainNavHostController
+
         )
         BankComponent(
             "https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ZaloPay-Square.png",
-            "ZALO PAY"
+            "ZALO PAY",
+            mainNavHostController = mainNavHostController
+
         )
         Spacer(modifier = Modifier.padding(bottom = LocalAppPadding.current.top_app_padding.dp))
     }
 }
 
 @Composable
-fun BankComponent(image: String, name: String) {
+fun BankComponent(image: String, name: String, mainNavHostController: CineSmartNavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -288,7 +298,9 @@ fun BankComponent(image: String, name: String) {
             .background(LocalAppColor.current.backgroundColorDarkHeader)
             .padding(
                 LocalAppPadding.current.rounded_app_padding.dp
-            ), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center
+            )
+            .clickable { mainNavHostController.navController.navigate(Screens.PaymentSuccessScreen.route) }
+        , verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center
     ) {
         AsyncImage(model = image, contentDescription = "", modifier = Modifier
             .size(40.dp)
@@ -305,8 +317,8 @@ fun BankComponent(image: String, name: String) {
 }
 
 
-@Preview
-@Composable
-fun PreviewPaymentScreen() {
-    PaymentScreen()
-}
+//@Preview
+//@Composable
+//fun PreviewPaymentScreen() {
+//    PaymentScreen()
+//}

@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -60,6 +59,8 @@ dependencies {
 // youtube play
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:11.1.0")
 // ViewModel
+    implementation("androidx.compose.foundation:foundation:1.7.0-alpha07")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
 
@@ -67,7 +68,7 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
     implementation("androidx.compose.material:material:1.6.8")
-    implementation ("androidx.palette:palette-ktx:1.0.0")
+    implementation("androidx.palette:palette-ktx:1.0.0")
 
     implementation("androidx.core:core-ktx:1.3.2")
     implementation(libs.androidx.core.ktx)

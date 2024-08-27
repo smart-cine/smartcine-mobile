@@ -1,6 +1,7 @@
 package com.example.cinesmart.Components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import com.example.cinesmart.Navigation.CineSmartNavController
+import com.example.cinesmart.Screens.Screens
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
@@ -33,7 +36,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlin.math.absoluteValue
 
 @Composable
-fun TrendingComponent() {
+fun TrendingComponent(mainNavHostController: CineSmartNavController) {
     Column(
         modifier = Modifier.padding(
             top = LocalAppPadding.current.rounded_app_padding.dp,
@@ -42,7 +45,7 @@ fun TrendingComponent() {
     ) {
         TitleOfListFilmComponent("Trending Now")
         Spacer(modifier = Modifier.padding(top = LocalAppPadding.current.rounded_app_padding.dp))
-        CarouselCard()
+        CarouselCard(mainNavHostController = mainNavHostController)
     }
 }
 
@@ -78,7 +81,7 @@ fun TitleOfListFilmComponent(title: String, view: Boolean = false) {
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun CarouselCard() {
+fun CarouselCard(mainNavHostController: CineSmartNavController) {
     //mock data
     val sliderList = listOf(
         "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg",
@@ -124,6 +127,8 @@ fun CarouselCard() {
                     stop = 1f,
                     fraction = 1f - pageOffset.coerceIn(0f, 1f)
                 )
+            }.clickable {
+                mainNavHostController.navController.navigate(Screens.FilmInfoScreen.route)
             },
             colors = CardColors(
                 Color.Transparent,
@@ -144,7 +149,7 @@ fun CarouselCard() {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun NewReleasesComponent() {
+fun NewReleasesComponent(mainNavHostController: CineSmartNavController) {
     val listFilm = listOf(
         "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg",
         "https://rachelsreviews.net/wp-content/uploads/2016/06/film.jpg",
@@ -168,6 +173,9 @@ fun NewReleasesComponent() {
                         .width(200.dp)
                         .wrapContentHeight()
                         .padding(end = if (index != (listFilm.size - 1)) 12.dp else 0.dp)
+                        .clickable {
+                            mainNavHostController.navController.navigate(Screens.FilmInfoScreen.route)
+                        }
                 ) {
                     ImageWithTags(260, 8.6f)
                     Spacer(modifier = Modifier.padding(4.dp))
@@ -179,7 +187,7 @@ fun NewReleasesComponent() {
 }
 
 @Composable
-fun UpcommingComponent() {
+fun UpcommingComponent(mainNavHostController: CineSmartNavController) {
     val listFilm = listOf(
         "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg",
         "https://lumiere-a.akamaihd.net/v1/images/p_junglecruise_21740_v2_bb7f0ae4.jpeg",
@@ -198,6 +206,9 @@ fun UpcommingComponent() {
                     modifier = Modifier
                         .width(150.dp)
                         .padding(end = if (index != listFilm.size - 1) 12.dp else 0.dp)
+                        .clickable {
+                            mainNavHostController.navController.navigate(Screens.FilmInfoScreen.route)
+                        }
                 ) {
                     ImageWithTags(height = 200)
                     Spacer(modifier = Modifier.padding(4.dp))

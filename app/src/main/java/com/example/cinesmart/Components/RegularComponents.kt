@@ -1,5 +1,6 @@
 package com.example.cinesmart.Components
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -51,11 +52,14 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Star
@@ -90,6 +94,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -98,7 +103,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.example.cinesmart.Navigation.CineSmartNavController
+import com.example.cinesmart.Screens.Screens
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppImage
 import com.example.cinesmart.ui.theme.LocalAppPadding
@@ -244,7 +255,7 @@ fun InfoFilm(
 }
 
 @Composable
-fun MainHeader(modifier: Modifier = Modifier) {
+fun MainHeader(modifier: Modifier = Modifier, mainNavHostController: CineSmartNavController) {
     Box(
         modifier = modifier
             .padding(
@@ -270,17 +281,23 @@ fun MainHeader(modifier: Modifier = Modifier) {
             ) {
                 SearchComponent(Modifier.weight(1f))
                 Spacer(modifier = Modifier.padding(8.dp))
-                CustomButton(16, "Log in", false)
+                CustomButton(
+                    16,
+                    "Log in",
+                    false,
+                    mainNavHostController = mainNavHostController,
+                    destinationNavigation = Screens.LoginFragment.route
+                )
             }
         }
     }
 }
 
-@Preview
-@Composable
-fun PreviewMain() {
-    MainHeader()
-}
+//@Preview
+//@Composable
+//fun PreviewMain() {
+//    MainHeader()
+//}
 
 @Composable
 fun SearchComponent(modifier: Modifier = Modifier) {
@@ -338,7 +355,9 @@ fun CustomButton(
     content: String,
     isFullWidth: Boolean,
     modifier: Modifier = Modifier,
-    isNormal: Boolean = false
+    isNormal: Boolean = false,
+    mainNavHostController: CineSmartNavController = CineSmartNavController(rememberNavController()),
+    destinationNavigation: String = ""
 ) {
     if (isFullWidth) {
 
@@ -350,6 +369,8 @@ fun CustomButton(
                 )
                 .fillMaxWidth()
                 .wrapContentHeight()
+                .clickable { mainNavHostController.navController.navigate(destinationNavigation) }
+
                 .padding(top = size.dp, bottom = size.dp)
         ) {
             Text(
@@ -372,12 +393,15 @@ fun CustomButton(
                 )
                 .wrapContentHeight()
                 .requiredWidth(80.dp)
+                .clickable { mainNavHostController.navController.navigate(destinationNavigation) }
+
                 .padding(
                     top = (size - 4).dp,
                     bottom = (size - 4).dp,
                     start = size.dp,
                     end = size.dp
                 )
+
         ) {
             Text(
                 text = content,
@@ -395,7 +419,11 @@ fun CustomButton(
 
 
 @Composable
-fun TopBarTitleAndReturnButton(title: String, modifier: Modifier = Modifier) {
+fun TopBarTitleAndReturnButton(
+    title: String,
+    modifier: Modifier = Modifier,
+    mainNavHostController: CineSmartNavController
+) {
     Row(
         modifier = modifier
     ) {
@@ -403,7 +431,7 @@ fun TopBarTitleAndReturnButton(title: String, modifier: Modifier = Modifier) {
             imageVector = Icons.Rounded.KeyboardArrowLeft,
             contentDescription = "Back",
             tint = LocalAppColor.current.textBonusColorLight,
-            modifier = Modifier.clickable { }
+            modifier = Modifier.clickable { mainNavHostController.navigateBack() }
         )
         Text(
             text = title,
@@ -458,7 +486,16 @@ fun YoutubePlayerComponent(
 }
 
 @Composable
-fun ButtonBottomBar(content: String, modifier: Modifier = Modifier, isNormal: Boolean = false) {
+//TODO: fix hard parameter
+fun ButtonBottomBar(
+    content: String,
+    modifier: Modifier = Modifier,
+    isNormal: Boolean = false,
+    mainNavHostController: CineSmartNavController = CineSmartNavController(
+        rememberNavController()
+    ),
+    destinationNavigation: String = ""
+) {
     CustomButton(
         size = 16, content = content, isFullWidth = true, modifier = modifier
             .shadow(
@@ -468,9 +505,10 @@ fun ButtonBottomBar(content: String, modifier: Modifier = Modifier, isNormal: Bo
                 0.dp,
                 0.dp,
                 0.dp
-            )
-            .clickable { },
-        isNormal = isNormal
+            ),
+        isNormal = isNormal,
+        mainNavHostController = mainNavHostController,
+        destinationNavigation = destinationNavigation
     )
 }
 
@@ -1257,18 +1295,69 @@ fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush
     }
 }
 
+
 @Composable
-fun LoadingTextComponent() {
-    Box(
+fun MainBottomBar(navController: NavController) {
+    val itemSelected = rememberSaveable{
+        mutableStateOf("HOME")
+    }
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(24.dp)
-            .background(shimmerBrush(targetValue = 1300f, showShimmer = true))
-    )
+            .background(LocalAppColor.current.backgroundColorDarkBody)
+            .padding(
+                bottom = (LocalAppPadding.current.top_app_padding / 2).dp,
+                top = LocalAppPadding.current.rounded_app_padding.dp
+            ), horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Icon(imageVector = Icons.Rounded.Home, contentDescription = "", modifier = Modifier
+            .size(30.dp)
+            .clickable {
+                navController.navigate(Screens.SelectFilmScreen.route) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+                itemSelected.value = "HOME"
+            }, tint = if(itemSelected.value == "HOME") LocalAppColor.current.backgroundColorDarkHeader else LocalAppColor.current.textBonusColorLight)
+        Icon(imageVector = Icons.Rounded.Menu, contentDescription = "", modifier = Modifier
+            .size(30.dp)
+            .clickable {
+                navController.navigate(Screens.SelectTheaterScreen.route) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+                itemSelected.value = "MENU"
+            }, tint = if(itemSelected.value == "MENU") LocalAppColor.current.backgroundColorDarkHeader else LocalAppColor.current.textBonusColorLight
+        )
+        Icon(imageVector = Icons.Rounded.AccountCircle, contentDescription = "", modifier = Modifier
+            .size(30.dp)
+            .clickable {
+                navController.navigate(Screens.UserInfoScreen.route) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+                itemSelected.value = "ACCOUNT"
+            }, tint = if(itemSelected.value == "ACCOUNT") LocalAppColor.current.backgroundColorDarkHeader else LocalAppColor.current.textBonusColorLight
+        )
+    }
+}
+
+@Composable
+fun hideSystemNavBars() {
+    val view = LocalView.current
+    val windowInfo = LocalContext.current
+
+    LaunchedEffect(key1 = Unit, block = {
+        val act = windowInfo as? Activity
+        act?.let {
+            val window = WindowCompat.getInsetsController(it.window, view)
+            window.hide(WindowInsetsCompat.Type.navigationBars())
+        }
+    })
 }
 
 @Composable
 @Preview
 fun PreviewGridPickSeat() {
-    Node("Available")
+    MainBottomBar(rememberNavController())
 }

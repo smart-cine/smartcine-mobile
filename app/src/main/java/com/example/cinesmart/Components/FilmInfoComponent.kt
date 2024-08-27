@@ -53,6 +53,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.cinesmart.Navigation.CineSmartNavController
+import com.example.cinesmart.Screens.Screens
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
@@ -123,17 +125,17 @@ fun TextWithShadow(modifier: Modifier = Modifier, name: String, navigateState: S
 }
 
 @Composable
-fun FilmInfoBlock(modifier: Modifier = Modifier, navigateState: String) {
+fun FilmInfoBlock(modifier: Modifier = Modifier, navigateState: String, mainNavHostController:CineSmartNavController) {
     // TODO 1: Create enum class hold About and Sessions
     if (navigateState == "About") {
-        FilmDescriptionBlock(modifier = modifier)
+        FilmDescriptionBlock(modifier = modifier, mainNavHostController = mainNavHostController)
     } else {
-        FilmPerformBlock(modifier = modifier)
+        FilmPerformBlock(modifier = modifier, mainNavHostController = mainNavHostController)
     }
 }
 
 @Composable
-fun FilmDescriptionBlock(modifier: Modifier = Modifier) {
+fun FilmDescriptionBlock(modifier: Modifier = Modifier, mainNavHostController: CineSmartNavController) {
     //TODO: Mock data info film
     //TODO: inject viewmodel to get all field here
     val trailerId: String by remember {
@@ -195,7 +197,7 @@ fun FilmDescriptionBlock(modifier: Modifier = Modifier) {
                 )
         ) {
             for (comment in listComment)
-                CommentComponent(comment = comment)
+                CommentComponent(comment = comment, mainNavHostController =mainNavHostController)
         }
         Text(
             modifier = Modifier
@@ -220,7 +222,7 @@ fun FilmDescriptionBlock(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun CommentComponent(comment: Int/* TODO: FIX*/, showReply: Boolean = false) {
+fun CommentComponent(comment: Int/* TODO: FIX*/, showReply: Boolean = false, mainNavHostController: CineSmartNavController) {
     val avatarUser: String? = null
 //        "https://static.vecteezy.com/system/resources/thumbnails/029/796/026/small_2x/asian-girl-anime-avatar-ai-art-photo.jpg"
     val userName: String = "Alex Gi"
@@ -241,7 +243,7 @@ fun CommentComponent(comment: Int/* TODO: FIX*/, showReply: Boolean = false) {
             .padding(
                 bottom = (LocalAppPadding.current.rounded_app_padding / 3).dp
             )
-            .clickable { }
+            .clickable { mainNavHostController.navController.navigate(Screens.AllCommentScreen.route)}
     ) {
         Column(
             modifier = Modifier
@@ -643,7 +645,7 @@ fun DurationTimeAndLanguageRowComponent(
 
 
 @Composable
-fun FilmPerformBlock(modifier: Modifier = Modifier) {
+fun FilmPerformBlock(modifier: Modifier = Modifier, mainNavHostController: CineSmartNavController) {
     val listCinema = listOf(1, 2, 3, 4, 5, 6, 7)
     val listPerformCinema = listOf(1, 2, 3, 4, 5, 6, 7, 8)
     Scaffold(
@@ -688,7 +690,7 @@ fun FilmPerformBlock(modifier: Modifier = Modifier) {
                 }
             }
             itemsIndexed(listPerformCinema) { index, item ->
-                PerformCinema(index)
+                PerformCinema(index = index, mainNavHostController = mainNavHostController)
             }
         }
 
@@ -697,7 +699,7 @@ fun FilmPerformBlock(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PerformCinema(index: Int, modifier: Modifier = Modifier) {
+fun PerformCinema(index: Int, modifier: Modifier = Modifier, mainNavHostController: CineSmartNavController) {
     val cinemaName = "BHD Star Le Van Viet"
     val isExpanded = remember {
         mutableStateOf(false)
@@ -718,6 +720,7 @@ fun PerformCinema(index: Int, modifier: Modifier = Modifier) {
             )
             .background(LocalAppColor.current.backgroundColorDarkHeader)
             .animateContentSize()
+            .clickable { isExpanded.value = !isExpanded.value }
 
     ) {
         Row(
@@ -753,7 +756,7 @@ fun PerformCinema(index: Int, modifier: Modifier = Modifier) {
             )
         }
         if (isExpanded.value) {
-            GridPerform()
+            GridPerform(mainNavHostController = mainNavHostController)
         }
         Box(
             modifier = Modifier
@@ -768,7 +771,7 @@ fun PerformCinema(index: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun GridPerform() {
+fun GridPerform(mainNavHostController: CineSmartNavController) {
     val listPerform by remember {
         mutableStateOf(listOf(1, 2, 3, 4, 5, 6, 7, 8))
     }
@@ -793,20 +796,20 @@ fun GridPerform() {
                     .padding(LocalAppPadding.current.rounded_app_padding.dp)
                     .wrapContentHeight()
             ) {
-                PerformItem()
+                PerformItem(mainNavHostController = mainNavHostController)
             }
         }
     }
 }
 
 @Composable
-fun PerformItem(modifier: Modifier = Modifier) {
+fun PerformItem(modifier: Modifier = Modifier, mainNavHostController: CineSmartNavController) {
     val startTime = "09:00"
     val endTime = "11:03"
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { }, horizontalAlignment = Alignment.CenterHorizontally
+            .clickable {mainNavHostController.navController.navigate(Screens.PickSeatScreen.route) }, horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(modifier = Modifier, verticalAlignment = Alignment.Bottom) {
             Text(
@@ -829,11 +832,11 @@ fun PerformItem(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
-@Composable
-fun PreviewPerformCinema() {
-    PerformCinema(index = 0)
-}
+//@Preview
+//@Composable
+//fun PreviewPerformCinema() {
+//    PerformCinema(index = 0)
+//}
 
 @Composable
 fun ListPerformComponent(modifier: Modifier = Modifier) {
@@ -896,9 +899,8 @@ fun CinemaLogoComponent(focus: Boolean) {
     }
 }
 
-
-@Preview(showBackground = true, widthDp = 600, heightDp = 500)
-@Composable
-fun PreviewComponent() {
-    FilmPerformBlock()
-}
+//@Preview(showBackground = true, widthDp = 600, heightDp = 500)
+//@Composable
+//fun PreviewComponent() {
+//    FilmPerformBlock()
+//}

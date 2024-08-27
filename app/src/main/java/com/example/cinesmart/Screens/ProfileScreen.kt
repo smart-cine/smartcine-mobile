@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -38,16 +39,19 @@ import com.example.cinesmart.Components.ButtonBottomBar
 import com.example.cinesmart.Components.CustomButton
 import com.example.cinesmart.Components.TagString
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
+import com.example.cinesmart.Components.hideSystemNavBars
+import com.example.cinesmart.Navigation.CineSmartNavController
 import com.example.cinesmart.ui.theme.LocalAppColor
 import com.example.cinesmart.ui.theme.LocalAppPadding
 import com.example.cinesmart.ui.theme.LocalAppTypography
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(mainNavHostController:CineSmartNavController) {
     val sizeOfAvata = 70
     var sizeOfAvataComponent = 0
     val userName = "Phung Xuan Giap"
     val listFilmBought = listOf(1,2,3,4,5,6,7,8,9,10)
+    hideSystemNavBars()
     Scaffold(
         topBar = {
             TopBarTitleAndReturnButton(
@@ -55,9 +59,11 @@ fun ProfileScreen() {
                     .background(
                         LocalAppColor.current.backgroundColorDarkHeader
                     )
-                    .padding(top = LocalAppPadding.current.top_app_padding.dp)
+                    .padding(top = LocalAppPadding.current.top_app_padding.dp),
+                mainNavHostController = mainNavHostController
             )
         },
+        modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -235,9 +241,9 @@ fun InfoComponent(icon: ImageVector, type: String, num: Int) {
         )
     }
 }
-
-@Preview
-@Composable
-fun PreviewProfileComponent() {
-    ProfileScreen()
-}
+//
+//@Preview
+//@Composable
+//fun PreviewProfileComponent() {
+//    ProfileScreen()
+//}
