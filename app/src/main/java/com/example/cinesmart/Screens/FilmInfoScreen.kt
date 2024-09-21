@@ -18,6 +18,7 @@ import androidx.navigation.NavHostController
 import com.example.cinesmart.Components.Background
 import com.example.cinesmart.Components.ButtonBottomBar
 import com.example.cinesmart.Components.FilmInfoBlock
+import com.example.cinesmart.Components.InfoFilmHeader
 import com.example.cinesmart.Components.NavigationBarFilmInfo
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
 import com.example.cinesmart.Components.hideSystemNavBars
@@ -27,29 +28,6 @@ import com.example.cinesmart.ui.theme.LocalAppPadding
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 
-@Composable
-fun InfoFilmHeader(
-    modifier: Modifier = Modifier,
-    navigateState: String,
-    changeNavigateState: () -> Unit,
-    mainNavHostController:CineSmartNavController
-) {
-    Column(modifier = modifier) {
-        TopBarTitleAndReturnButton(
-            "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô", modifier = Modifier.padding(
-                start = LocalAppPadding.current.rounded_app_padding.dp,
-                end = LocalAppPadding.current.rounded_app_padding.dp,
-                top = LocalAppPadding.current.top_app_padding.dp,
-                bottom = LocalAppPadding.current.rounded_app_padding.dp
-            ),
-            mainNavHostController = mainNavHostController
-        )
-        NavigationBarFilmInfo(
-            navigateState = navigateState,
-            changeNavigateState = changeNavigateState
-        )
-    }
-}
 
 @Composable
 fun FilmInfoScreen(mainNavHostController: CineSmartNavController) {

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cinesmart.Components.BottomBarPerform
 import com.example.cinesmart.Components.ButtonBottomBar
 import com.example.cinesmart.Components.CustomButton
 import com.example.cinesmart.Components.FilmPerformInfoTopBar
@@ -30,6 +31,7 @@ import com.example.cinesmart.Components.TagRankAndAge
 import com.example.cinesmart.Components.TagString
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
 import com.example.cinesmart.Components.TypeOfSeat
+import com.example.cinesmart.Components.TypeOfSeatContainer
 import com.example.cinesmart.Components.ZoomableGridDemo
 import com.example.cinesmart.Components.hideSystemNavBars
 import com.example.cinesmart.Navigation.CineSmartNavController
@@ -94,56 +96,6 @@ fun PickseatScreen(mainNavHostController:CineSmartNavController) {
     }
 }
 
-@Composable
-fun BottomBarPerform(mainNavHostController:CineSmartNavController) {
-    val fee = 20000
-    val seatName = "H3"
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(LocalAppColor.current.backgroundColorDarkHeader)
-            .padding(
-                start = LocalAppPadding.current.rounded_app_padding.dp,
-                end = LocalAppPadding.current.rounded_app_padding.dp,
-                top = LocalAppPadding.current.rounded_app_padding.dp,
-                bottom = LocalAppPadding.current.top_app_padding.dp
-            )
-    ) {
-        Column(
-            modifier = Modifier,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(modifier = Modifier.padding(
-                bottom = LocalAppPadding.current.rounded_app_padding.dp,
-            ), verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "The Batman: "+"Seat-", style = LocalAppTypography.current.text_18_bold, color = LocalAppColor.current.textColorLight)
-                TagString(seatName = seatName)
-            }
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Estimated", style = LocalAppTypography.current.text_14_normal, color = LocalAppColor.current.textColorLight)
-                Text(text = fee.toString()+" VND", style = LocalAppTypography.current.text_18_bold, color = LocalAppColor.current.textColorLight)
-            }
-            Spacer(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp))
-            ButtonBottomBar("Top Up", mainNavHostController = mainNavHostController, destinationNavigation = Screens.PaymentScreen.route)
-        }
-    }
-}
-
-@Composable
-fun TypeOfSeatContainer(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.padding(
-            LocalAppPadding.current.rounded_app_padding.dp
-        ), horizontalArrangement = Arrangement.Center
-    ) {
-        TypeOfSeat(type = "Available")
-        Spacer(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp))
-        TypeOfSeat(type = "Occupied")
-        Spacer(modifier = Modifier.padding(LocalAppPadding.current.rounded_app_padding.dp))
-        TypeOfSeat(type = "Chosen")
-    }
-}
 
 //@Preview(backgroundColor = Color.BLUE.toLong())
 //@Composable

@@ -899,6 +899,30 @@ fun CinemaLogoComponent(focus: Boolean) {
     }
 }
 
+@Composable
+fun InfoFilmHeader(
+    modifier: Modifier = Modifier,
+    navigateState: String,
+    changeNavigateState: () -> Unit,
+    mainNavHostController:CineSmartNavController
+) {
+    Column(modifier = modifier) {
+        TopBarTitleAndReturnButton(
+            "Thám Tử Lừng Danh Conan: Ngôi Sao 5 Cánh 1 Triệu Đô", modifier = Modifier.padding(
+                start = LocalAppPadding.current.rounded_app_padding.dp,
+                end = LocalAppPadding.current.rounded_app_padding.dp,
+                top = LocalAppPadding.current.top_app_padding.dp,
+                bottom = LocalAppPadding.current.rounded_app_padding.dp
+            ),
+            mainNavHostController = mainNavHostController
+        )
+        NavigationBarFilmInfo(
+            navigateState = navigateState,
+            changeNavigateState = changeNavigateState
+        )
+    }
+}
+
 //@Preview(showBackground = true, widthDp = 600, heightDp = 500)
 //@Composable
 //fun PreviewComponent() {

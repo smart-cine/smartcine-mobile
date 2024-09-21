@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.cinesmart.Components.ButtonBottomBar
+import com.example.cinesmart.Components.TicketComponent
 import com.example.cinesmart.Components.TopBarTitleAndReturnButton
 import com.example.cinesmart.Components.hideSystemNavBars
 import com.example.cinesmart.Navigation.CineSmartNavController
